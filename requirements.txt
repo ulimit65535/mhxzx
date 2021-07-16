@@ -1,7 +1,5 @@
 opencv-python
-win32gui
 psutil
-ctypes
 pypiwin32
 numpy
 pyautogui
