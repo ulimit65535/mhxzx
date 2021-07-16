@@ -14,6 +14,8 @@ def run_task(hwnd, task_name):
     print(task_name)
     if task_name == "刷侠义":
         task.run_xiayi()
+    elif task_name == "单人一条":
+        task.run_yitiao_single()
 
 
 class AppUI:
@@ -68,21 +70,12 @@ class AppUI:
 
         self.brush_task = StringVar()
         self.cbx_brush_target = ttk.Combobox(lf2_0, textvariable=self.brush_task, width=6, state='readonly')
-        self.cbx_brush_target["values"] = ("刷侠义", "", "")
+        self.cbx_brush_target["values"] = ("刷侠义", "单人一条", "")
         self.cbx_brush_target.current(0)
         self.cbx_brush_target.pack(side=TOP, padx=2, pady=2, fill=X)
 
         self.btn_brush = ttk.Button(lf2_0, text="开始任务", state=DISABLED, command=self.brush)
         self.btn_brush.pack(side=TOP, padx=2, pady=2, fill=X)
-
-        self.single_task = StringVar()
-        self.cbx_single_task = ttk.Combobox(lf2_1, textvariable=self.single_task, width=6, state='readonly')
-        self.cbx_single_task["values"] = ("丝绸之路", "帮派宴会", "自动挖宝", "科举答题", "桃来了", "主线任务", "任务链", "师门任务")
-        self.cbx_single_task.current(0)
-        self.cbx_single_task.pack(side=TOP, padx=2, pady=2, fill=X)
-
-        self.btn_single_task = ttk.Button(lf2_1, text="开始任务", state=DISABLED, command=self.test)
-        self.btn_single_task.pack(side=TOP, padx=2, pady=2, fill=X)
 
         self.team_task = StringVar()
         self.cbx_team_task = ttk.Combobox(lf2_3, textvariable=self.team_task, width=6, state='readonly')

@@ -11,7 +11,6 @@ class Task:
     def __init__(self, hwnd_list):
         self.hwnd_list = hwnd_list
         self.button_xiayi_img = cv2.cvtColor(cv2.imread("images/button_xiayi.png"), cv2.COLOR_BGR2GRAY)
-        self.button_close_img = cv2.cvtColor(cv2.imread("images/button_close.png"), cv2.COLOR_BGR2GRAY)
         self.button_shenqing_img = cv2.cvtColor(cv2.imread("images/button_shenqing.png"), cv2.COLOR_BGR2GRAY)
         self.button_chuangjianduiwu_img = cv2.cvtColor(cv2.imread("images/button_chuangjianduiwu.png"), cv2.COLOR_BGR2GRAY)
         self.button_likaiduiwu_img = cv2.cvtColor(cv2.imread("images/button_likaiduiwu.png"), cv2.COLOR_BGR2GRAY)
@@ -28,8 +27,12 @@ class Task:
         self.button_duiwu_pipei_img = cv2.cvtColor(cv2.imread("images/button_duiwu_pipei.png"), cv2.COLOR_BGR2GRAY)
         self.button_queding_img = cv2.cvtColor(cv2.imread("images/button_queding.png"), cv2.COLOR_BGR2GRAY)
         self.press_kongbaiguanbi_img = cv2.cvtColor(cv2.imread("images/press_kongbaiguanbi.png"), cv2.COLOR_BGR2GRAY)
-        self.button_qianwangzudui_img = cv2.cvtColor(cv2.imread("images/button_qianwangzudui.png"), cv2.COLOR_BGR2GRAY)
+        self.duihua_qianwangzudui_img = cv2.cvtColor(cv2.imread("images/duihua_qianwangzudui.png"), cv2.COLOR_BGR2GRAY)
         self.button_buzhen_img = cv2.cvtColor(cv2.imread("images/button_buzhen.png"), cv2.COLOR_BGR2GRAY)
+        self.duihua_qianwangcanyu_img = cv2.cvtColor(cv2.imread("images/duihua_qianwangcanyu.png"), cv2.COLOR_BGR2GRAY)
+        self.button_kaishirenwu_img = cv2.cvtColor(cv2.imread("images/button_kaishirenwu.png"), cv2.COLOR_BGR2GRAY)
+
+        self.button_close_img_color = cv2.cvtColor(cv2.imread("images/button_close.png"), cv2.IMREAD_COLOR)
 
     def get_status(self, hwnd, src_img=None, with_standing=True):
         if src_img is None:
@@ -47,23 +50,31 @@ class Task:
             click(hwnd, pos, 50, 5)
             return "press_kongbaiguanbi"
 
-        # 关闭侠义窗口
-        points = get_match_points(src_img, self.button_close_img)
+        # 赏金，点开始任务
+        points = get_match_points(src_img, self.button_kaishirenwu_img)
         if points:
             px, py = points[0]
-            pos = (px + 7, py + 7)
-            click(hwnd, pos)
-            return "close_window"
+            pos = (px + 30, py + 5)
+            click(hwnd, pos, 50, 10)
+            return "click_kaishirenwu"
 
         # 关闭建议弹窗
-        points = get_match_points(src_img, self.button_close_jianyi_img)
+        points = get_match_points(src_img, self.button_close_jianyi_img, threshold=0.98)
         if points:
             pos = points[0]
             click(hwnd, pos)
             return "close_window_jianyi"
 
+        # 点前往参与
+        points = get_match_points(src_img, self.duihua_qianwangcanyu_img)
+        if points:
+            px, py = points[0]
+            pos = (px + 40, py + 5)
+            click(hwnd, pos)
+            return "click_qianwangcanyu"
+
         # 点前往组队
-        points = get_match_points(src_img, self.button_qianwangzudui_img)
+        points = get_match_points(src_img, self.duihua_qianwangzudui_img)
         if points:
             px, py = points[0]
             pos = (px + 40, py + 5)
@@ -89,6 +100,15 @@ class Task:
         points = get_match_points(src_img, self.button_duiwu_pipei_img)
         if points:
             return "waiting_pipei"
+
+        # 关闭侠义窗口
+        src_img_color = capture(hwnd, color=cv2.IMREAD_COLOR)
+        points = get_match_points(src_img_color, self.button_close_img_color, threshold=0.95)
+        if points:
+            px, py = points[0]
+            pos = (px + 7, py + 7)
+            click(hwnd, pos)
+            return "close_window"
 
         if with_standing:
             time.sleep(1)
@@ -211,6 +231,22 @@ class Task:
                         pos = (px + 30, py + 10)
                         click(hwnd, pos)
                         time.sleep(random.uniform(0.15, 0.2))
+
+    def run_yitiao_single(self):
+        num_standing = 0
+        while True:
+            if num_standing >= 10:
+                return
+
+            for hwnd in self.hwnd_list:
+                time.sleep(random.uniform(settings.inverval_min, settings.inverval_max))
+
+                status = self.get_status(hwnd)
+                print(status)
+                if status != "standing":
+                    num_standing = 0
+                else:
+                    num_standing += 1
 
 
 if __name__ == '__main__':
