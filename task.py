@@ -28,6 +28,8 @@ class Task:
         self.button_duiwu_pipei_img = cv2.cvtColor(cv2.imread("images/button_duiwu_pipei.png"), cv2.COLOR_BGR2GRAY)
         self.button_queding_img = cv2.cvtColor(cv2.imread("images/button_queding.png"), cv2.COLOR_BGR2GRAY)
         self.press_kongbaiguanbi_img = cv2.cvtColor(cv2.imread("images/press_kongbaiguanbi.png"), cv2.COLOR_BGR2GRAY)
+        self.button_qianwangzudui_img = cv2.cvtColor(cv2.imread("images/button_qianwangzudui.png"), cv2.COLOR_BGR2GRAY)
+        self.button_buzhen_img = cv2.cvtColor(cv2.imread("images/button_buzhen.png"), cv2.COLOR_BGR2GRAY)
 
     def get_status(self, hwnd, src_img=None, with_standing=True):
         if src_img is None:
@@ -60,12 +62,13 @@ class Task:
             click(hwnd, pos)
             return "close_window_jianyi"
 
-        # 点击自动
-        points = get_match_points(src_img, self.button_daoju_img)
+        # 点前往组队
+        points = get_match_points(src_img, self.button_qianwangzudui_img)
         if points:
-            pos = (814, 445)
+            px, py = points[0]
+            pos = (px + 40, py + 5)
             click(hwnd, pos)
-            return "in_battle"
+            return "click_qianwangzudui"
 
         # 点击确定
         points = get_match_points(src_img, self.button_queding_img)
@@ -74,6 +77,13 @@ class Task:
             pos = (px + 40, py + 10)
             click(hwnd, pos)
             return "click_queding"
+
+        # 点击自动
+        points = get_match_points(src_img, self.button_daoju_img)
+        if points:
+            pos = (814, 445)
+            click(hwnd, pos)
+            return "in_battle"
 
         # 匹配状态
         points = get_match_points(src_img, self.button_duiwu_pipei_img)
@@ -123,7 +133,7 @@ class Task:
                 # 在野外挂机
                 points = get_match_points(src_img, self.button_renwu_img, threshold=0.96)
                 if points:
-                    print("renwu_img")
+                    print("点两下，打开队伍")
                     # 点开队伍,点两下
                     pos = (838, 172)
                     click(hwnd, pos)
@@ -132,7 +142,7 @@ class Task:
                 else:
                     points = get_match_points(src_img, self.button_duiwu_img, threshold=0.96)
                     if points:
-                        print("duiwu")
+                        print("点一下，打开队伍")
                         # 点开队伍,点一下
                         pos = (838, 172)
                         click(hwnd, pos)
@@ -146,6 +156,14 @@ class Task:
                 # 等待队伍界面打开
                 time.sleep(random.uniform(1.8, 2.2))
                 src_img = capture(hwnd)
+                points = get_match_points(src_img, self.button_buzhen_img)
+                if not points:
+                    # 切换至队伍界面
+                    pos = (754, 107)
+                    click(hwnd, pos, 10, 10)
+                    time.sleep(random.uniform(1.0, 1.2))
+                    src_img = capture(hwnd)
+
                 # 不在队伍中
                 points = get_match_points(src_img, self.button_chuangjianduiwu_img)
                 if points:

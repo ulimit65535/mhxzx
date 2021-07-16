@@ -126,7 +126,7 @@ class AppUI:
         width = root.winfo_width()
         height = root.winfo_height()
 
-        size = '%dx%d+%d+%d' % (width, height, 1080, 250)
+        size = '%dx%d+%d+%d' % (width, height, 1080, 550)
         root.geometry(size)
 
         monitor = threading.Thread(target=self.monitor_process)
