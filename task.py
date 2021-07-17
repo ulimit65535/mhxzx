@@ -279,9 +279,11 @@ class Task:
                 print(status)
                 if status != "standing":
                     num_standing = 0
+                    continue
                 else:
                     num_standing += 1
 
+                src_img = capture(hwnd)
                 # 点前往参与
                 points = get_match_points(src_img, self.duihua_qianwangcanyu_img)
                 if points:
@@ -329,6 +331,7 @@ class Task:
             print(status)
             if status != "standing":
                 num_standing = 0
+                continue
             else:
                 num_standing += 1
 
