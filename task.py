@@ -318,8 +318,8 @@ class Task:
                 click(hwnd, pos, 20, 20)
                 time.sleep(random.uniform(1.0, 1.2))
                 # 点镇魔令
-                pos = (422, 265)
-                click(hwnd, pos, 5, 3)
+                pos = (424, 268)
+                click(hwnd, pos, 2, 2)
                 num_standing = 0
                 continue
 
