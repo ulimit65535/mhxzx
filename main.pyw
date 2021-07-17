@@ -122,7 +122,7 @@ class AppUI:
         width = root.winfo_width()
         height = root.winfo_height()
 
-        size = '%dx%d+%d+%d' % (width, height, 1080, 550)
+        size = '%dx%d+%d+%d' % (width, height, 1080, 750)
         root.geometry(size)
 
         monitor = threading.Thread(target=self.monitor_process)
@@ -196,11 +196,11 @@ class AppUI:
         # 获取主窗口句柄
         win32gui.EnumWindows(window_enumeration_handler, self.hwnd_main_list)
         if self.hwnd_order_asc:
-            self.hwnd_main_list.sort()
+            self.hwnd_main_list.sort(reverse=True)
 
             self.hwnd_order_asc = False
         else:
-            self.hwnd_main_list.sort(reverse=True)
+            self.hwnd_main_list.sort()
             self.hwnd_order_asc = True
         if self.hwnd_main_list:
             for i in range(len(self.hwnd_main_list)):
