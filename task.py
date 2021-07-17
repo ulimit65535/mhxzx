@@ -37,6 +37,7 @@ class Task:
         self.icon_tiaoguoduihua_img = cv2.cvtColor(cv2.imread("images/icon_tiaoguoduihua.png"), cv2.COLOR_BGR2GRAY)
         self.duihua_queding_img = cv2.cvtColor(cv2.imread("images/duihua_queding.png"), cv2.COLOR_BGR2GRAY)
         self.button_jixu_img = cv2.cvtColor(cv2.imread("images/button_jixu.png"), cv2.COLOR_BGR2GRAY)
+        self.button_shiyong_img = cv2.cvtColor(cv2.imread("images/button_shiyong.png"), cv2.COLOR_BGR2GRAY)
         self.duihua_duihua_img = cv2.cvtColor(cv2.imread("images/duihua_duihua.png"), cv2.COLOR_BGR2GRAY)
         self.duihua_zhandou_img = cv2.cvtColor(cv2.imread("images/duihua_zhandou.png"), cv2.COLOR_BGR2GRAY)
 
@@ -383,6 +384,14 @@ class Task:
                 points = get_match_points(src_img, self.button_jixu_img)
                 if points:
                     print("点继续")
+                    px, py = points[0]
+                    pos = (px + 30, py + 5)
+                    click(hwnd, pos)
+                    continue
+
+                points = get_match_points(src_img, self.button_shiyong_img)
+                if points:
+                    print("点使用")
                     px, py = points[0]
                     pos = (px + 30, py + 5)
                     click(hwnd, pos)
