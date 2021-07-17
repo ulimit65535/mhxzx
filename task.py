@@ -33,7 +33,7 @@ class Task:
         self.button_kaishirenwu_img = cv2.cvtColor(cv2.imread("images/button_kaishirenwu.png"), cv2.COLOR_BGR2GRAY)
         self.duihua_jitianxia_img = cv2.cvtColor(cv2.imread("images/duihua_jitianxia.png"), cv2.COLOR_BGR2GRAY)
         self.duihua_jiequ_img = cv2.cvtColor(cv2.imread("images/duihua_jiequ.png"), cv2.COLOR_BGR2GRAY)
-        self.duihua_zaijian_img = cv2.cvtColor(cv2.imread("images/duihua_zaijian.png"), cv2.COLOR_BGR2GRAY)
+        self.duihua_likai_img = cv2.cvtColor(cv2.imread("images/duihua_likai.png"), cv2.COLOR_BGR2GRAY)
         self.icon_tiaoguoduihua_img = cv2.cvtColor(cv2.imread("images/icon_tiaoguoduihua.png"), cv2.COLOR_BGR2GRAY)
         self.duihua_queding_img = cv2.cvtColor(cv2.imread("images/duihua_queding.png"), cv2.COLOR_BGR2GRAY)
         self.button_jixu_img = cv2.cvtColor(cv2.imread("images/button_jixu.png"), cv2.COLOR_BGR2GRAY)
@@ -141,6 +141,8 @@ class Task:
                     pos = (343, 396)
                     click(hwnd, pos, 100, 30)
                     return "tiaoguoduihua"
+                else:
+                    return "standing"
             else:
                 return "moving"
         else:
@@ -355,6 +357,14 @@ class Task:
                 src_img = capture(hwnd)
                 # 未知对话，点
                 points = get_match_points(src_img, self.duihua_duihua_img)
+                if points:
+                    print("点未知对话")
+                    px, py = points[0]
+                    pos = (px + 40, py + 5)
+                    click(hwnd, pos)
+                    num_standing = 0
+                    continue
+                points = get_match_points(src_img, self.duihua_likai_img)
                 if points:
                     print("点未知对话")
                     px, py = points[0]
