@@ -241,6 +241,9 @@ class Task:
                                     pos = (834, 208)
                                     click(hwnd, pos, 10, 40)
                             time.sleep(random.uniform(1.8, 2.2))
+                        else:
+                            # 满员，继续等待
+                            continue
 
                 # 侠义button
                 pos = (825, 379)
