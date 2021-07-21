@@ -5,7 +5,7 @@ launcher = "C:\\Users\\WinSp2n\\PWRD\\MHXZXMobile\\WmGpLaunch\\WmgpLauncher.exe"
 hwnd_title = "梦幻新诛仙 PC互通版"
 
 # 多窗口摆放坐标,最多五开
-coordinate_list = [(0, 0), (896, 0), (0, 200), (896, 200), (0, 0)]
+coordinate_list = [(0, 0), (896, 0), (896, 505), (896, 200), (0, 0)]
 
 # 窗口大小
 width = 896
