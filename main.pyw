@@ -20,6 +20,8 @@ def run_task(hwnd, task_name):
         task.run_wuxianzhenmo()
     elif task_name == "采集":
         task.run_caiji()
+    elif task_name == "自动确定":
+        task.run_zidong_queding()
 
 
 class AppUI:
@@ -73,7 +75,7 @@ class AppUI:
 
         self.single_task = StringVar()
         self.cbx_single_target = ttk.Combobox(lf2_0, textvariable=self.single_task, width=6, state='readonly')
-        self.cbx_single_target["values"] = ("刷侠义", "单人一条", "采集")
+        self.cbx_single_target["values"] = ("刷侠义", "单人一条", "采集", "自动确定")
         self.cbx_single_target.current(0)
         self.cbx_single_target.pack(side=TOP, padx=2, pady=2, fill=X)
 
