@@ -41,6 +41,7 @@ class Task:
         self.duihua_duihua_img = cv2.cvtColor(cv2.imread("images/duihua_duihua.png"), cv2.COLOR_BGR2GRAY)
         self.duihua_zhandou_img = cv2.cvtColor(cv2.imread("images/duihua_zhandou.png"), cv2.COLOR_BGR2GRAY)
         self.button_paiwei_img = cv2.cvtColor(cv2.imread("images/button_paiwei.png"), cv2.COLOR_BGR2GRAY)
+        self.button_queding_paiwei_img = cv2.cvtColor(cv2.imread("images/button_queding_paiwei.png"), cv2.COLOR_BGR2GRAY)
 
 
         self.button_close_img_color = cv2.cvtColor(cv2.imread("images/button_close.png"), cv2.IMREAD_COLOR)
@@ -420,18 +421,24 @@ class Task:
                 if points:
                     print("点确定或匹配")
                     px, py = points[0]
-                    pos = (px + 30, py + 5)
+                    pos = (px + 30, py + 10)
                     click(hwnd, pos)
                     continue
 
-                points = get_match_points(src_img, self.button_queding_img)
+                points = get_match_points(src_img, self.button_queding_paiwei_img)
                 if points:
                     print("队长匹配，点确定")
                     px, py = points[0]
-                    pos = (px + 40, py + 10)
+                    pos = (px + 50, py + 10)
                     click(hwnd, pos)
                     continue
 
+                # 点击自动
+                points = get_match_points(src_img, self.button_daoju_img)
+                if points:
+                    pos = (814, 445)
+                    click(hwnd, pos)
+                    continue
 
 if __name__ == '__main__':
     task = Task([67206])
