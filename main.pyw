@@ -32,7 +32,7 @@ class AppUI:
 
         self.running = None
 
-        self.hwnd_order_asc = True
+        #self.hwnd_order_asc = True
 
         root = Tk()
 
@@ -195,13 +195,7 @@ class AppUI:
 
         # 获取主窗口句柄
         win32gui.EnumWindows(window_enumeration_handler, self.hwnd_main_list)
-        if self.hwnd_order_asc:
-            self.hwnd_main_list.sort()
-
-            self.hwnd_order_asc = False
-        else:
-            self.hwnd_main_list.sort(reverse=True)
-            self.hwnd_order_asc = True
+        self.hwnd_main_list.sort()
         if self.hwnd_main_list:
             for i in range(len(self.hwnd_main_list)):
                 x, y = settings.coordinate_list[i]

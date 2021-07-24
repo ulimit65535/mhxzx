@@ -254,8 +254,8 @@ class Task:
                 points = get_match_points(src_img, self.button_shenqing_img)
                 if points:
                     points = get_clean_points(points)
-                    for point in points:
-                        px, py = point
+                    for i in range(3):
+                        px, py = points[i]
                         pos = (px + 30, py + 10)
                         click(hwnd, pos)
                         time.sleep(random.uniform(0.15, 0.2))
