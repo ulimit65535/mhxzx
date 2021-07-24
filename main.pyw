@@ -195,7 +195,7 @@ class AppUI:
 
         # 获取主窗口句柄
         win32gui.EnumWindows(window_enumeration_handler, self.hwnd_main_list)
-        self.hwnd_main_list.sort()
+        self.hwnd_main_list.sort(reverse=True)
         if self.hwnd_main_list:
             for i in range(len(self.hwnd_main_list)):
                 x, y = settings.coordinate_list[i]
