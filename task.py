@@ -255,7 +255,10 @@ class Task:
                 if points:
                     points = get_clean_points(points)
                     for i in range(3):
-                        px, py = points[i]
+                        try:
+                            px, py = points[i]
+                        except:
+                            break
                         pos = (px + 30, py + 10)
                         click(hwnd, pos)
                         time.sleep(random.uniform(0.15, 0.2))
