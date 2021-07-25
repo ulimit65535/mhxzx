@@ -42,7 +42,7 @@ class Task:
         self.duihua_zhandou_img = cv2.cvtColor(cv2.imread("images/duihua_zhandou.png"), cv2.COLOR_BGR2GRAY)
         self.button_paiwei_img = cv2.cvtColor(cv2.imread("images/button_paiwei.png"), cv2.COLOR_BGR2GRAY)
         self.button_queding_paiwei_img = cv2.cvtColor(cv2.imread("images/button_queding_paiwei.png"), cv2.COLOR_BGR2GRAY)
-
+        self.duihua_zhenmo_end_img = cv2.cvtColor(cv2.imread("images/duihua_zhenmo_end.png"), cv2.COLOR_BGR2GRAY)
 
         self.button_close_img_color = cv2.cvtColor(cv2.imread("images/button_close.png"), cv2.IMREAD_COLOR)
 
@@ -345,6 +345,12 @@ class Task:
                 num_standing += 1
 
             src_img = capture(hwnd)
+
+            points = get_match_points(src_img, self.duihua_zhenmo_end_img)
+            if points:
+                print("镇魔结束")
+                return
+
             points = get_match_points(src_img, self.duihua_jitianxia_img)
             if points:
                 print("与计天下对话")
