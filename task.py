@@ -62,13 +62,13 @@ class Task:
             click(hwnd, pos, 50, 5)
             return "press_kongbaiguanbi"
 
-        # 赏金，点开始任务
-        points = get_match_points(src_img, self.button_kaishirenwu_img)
-        if points:
-            px, py = points[0]
-            pos = (px + 30, py + 5)
-            click(hwnd, pos, 50, 10)
-            return "click_kaishirenwu"
+        # # 赏金，点开始任务
+        # points = get_match_points(src_img, self.button_kaishirenwu_img)
+        # if points:
+        #     px, py = points[0]
+        #     pos = (px + 30, py + 5)
+        #     click(hwnd, pos, 50, 10)
+        #     return "click_kaishirenwu"
 
         # 关闭建议弹窗
         points = get_match_points(src_img, self.button_close_jianyi_img, threshold=0.98)
@@ -77,21 +77,21 @@ class Task:
             click(hwnd, pos)
             return "close_window_jianyi"
 
-        # 接取任务
-        points = get_match_points(src_img, self.duihua_jiequ_img)
-        if points:
-            px, py = points[0]
-            pos = (px + 40, py + 5)
-            click(hwnd, pos)
-            return "click_jiequrenwu"
-
-        # 点击确定
-        points = get_match_points(src_img, self.button_queding_img)
-        if points:
-            px, py = points[0]
-            pos = (px + 40, py + 10)
-            click(hwnd, pos)
-            return "click_queding"
+        # # 接取任务
+        # points = get_match_points(src_img, self.duihua_jiequ_img)
+        # if points:
+        #     px, py = points[0]
+        #     pos = (px + 40, py + 5)
+        #     click(hwnd, pos)
+        #     return "click_jiequrenwu"
+        #
+        # # 点击确定
+        # points = get_match_points(src_img, self.button_queding_img)
+        # if points:
+        #     px, py = points[0]
+        #     pos = (px + 40, py + 10)
+        #     click(hwnd, pos)
+        #     return "click_queding"
 
         # 30秒到时间，会自动挂智能技能，不要点自动
         points = get_match_points(src_img, self.button_daoju_img)
@@ -104,6 +104,11 @@ class Task:
         points = get_match_points(src_img, self.button_duiwu_pipei_img)
         if points:
             return "waiting_pipei"
+
+        points = get_match_points(src_img, self.duihua_likai_img, threshold=0.85)
+        if points:
+            print("对话选项")
+            return "standing"
 
         # 关闭侠义窗口
         src_img_color = capture(hwnd, color=cv2.IMREAD_COLOR)
@@ -130,20 +135,21 @@ class Task:
 
             points = get_match_points(src_img2, src_img3, threshold=0.8)
             if points:
-                points = get_match_points(src_img2, self.duihua_duihua_img)
-                if not points:
-                    points = get_match_points(src_img2, self.duihua_zhandou_img)
-                if points:
-                    px, py = points[0]
-                    pos = (px + 40, py + 5)
-                    click(hwnd, pos)
-                    return "click_weizhiduihua"
+                # points = get_match_points(src_img3, self.duihua_duihua_img)
+                # if not points:
+                #     points = get_match_points(src_img3, self.duihua_zhandou_img)
+                # if points:
+                #     px, py = points[0]
+                #     pos = (px + 40, py + 5)
+                #     click(hwnd, pos)
+                #     return "click_weizhiduihua"
 
-                points = get_match_points(src_img2, self.button_beibao_img)
+                points = get_match_points(src_img3, self.button_beibao_img)
                 if not points:
-                    pos = (343, 396)
-                    click(hwnd, pos, 100, 30)
-                    return "tiaoguoduihua"
+                    pos = (172, 266)
+                    click(hwnd, pos, 30, 30)
+                    print("跳过对话")
+                    return "standing"
                 else:
                     return "standing"
             else:
@@ -343,10 +349,18 @@ class Task:
 
             src_img = capture(hwnd)
 
-            points = get_match_points(src_img, self.duihua_zhenmo_end_img)
+            points = get_match_points(src_img, self.duihua_zhenmo_end_img,threshold=0.85)
             if points:
                 print("镇魔结束")
                 return
+
+            # 接取任务
+            points = get_match_points(src_img, self.duihua_jiequ_img)
+            if points:
+                px, py = points[0]
+                pos = (px + 40, py + 5)
+                click(hwnd, pos)
+                continue
 
             points = get_match_points(src_img, self.duihua_jitianxia_img)
             if points:
