@@ -17,7 +17,7 @@ class Task:
         self.window_likaiduiwu_img = cv2.cvtColor(cv2.imread("images/window_likaiduiwu.png"), cv2.COLOR_BGR2GRAY)
         #self.button_renwu_xianshi_img = cv2.cvtColor(cv2.imread("images/button_renwu_xianshi.png"), cv2.COLOR_BGR2GRAY)
         self.button_renwu_yincang_img = cv2.cvtColor(cv2.imread("images/button_renwu_yincang.png"), cv2.COLOR_BGR2GRAY)
-        self.button_jingxiu_img = cv2.cvtColor(cv2.imread("images/button_jingxiu.png"), cv2.COLOR_BGR2GRAY)
+        self.button_beibao_img = cv2.cvtColor(cv2.imread("images/button_beibao.png"), cv2.COLOR_BGR2GRAY)
         self.in_battle_img = cv2.cvtColor(cv2.imread("images/in_battle.png"), cv2.COLOR_BGR2GRAY)
         self.button_daoju_img = cv2.cvtColor(cv2.imread("images/button_daoju.png"), cv2.COLOR_BGR2GRAY)
         self.button_renwu_img = cv2.cvtColor(cv2.imread("images/button_renwu.png"), cv2.COLOR_BGR2GRAY)
@@ -139,7 +139,7 @@ class Task:
                     click(hwnd, pos)
                     return "click_weizhiduihua"
 
-                points = get_match_points(src_img2, self.button_jingxiu_img)
+                points = get_match_points(src_img2, self.button_beibao_img)
                 if not points:
                     pos = (343, 396)
                     click(hwnd, pos, 100, 30)
@@ -150,9 +150,6 @@ class Task:
                 return "moving"
         else:
             return "moving"
-
-        # 未能匹配上任何状态
-        return "unknown"
 
     def run_xiayi(self):
         while True:
