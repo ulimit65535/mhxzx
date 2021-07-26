@@ -43,16 +43,21 @@ class Task:
         self.button_paiwei_img = cv2.cvtColor(cv2.imread("images/button_paiwei.png"), cv2.COLOR_BGR2GRAY)
         self.button_queding_paiwei_img = cv2.cvtColor(cv2.imread("images/button_queding_paiwei.png"), cv2.COLOR_BGR2GRAY)
         self.duihua_zhenmo_end_img = cv2.cvtColor(cv2.imread("images/duihua_zhenmo_end.png"), cv2.COLOR_BGR2GRAY)
+        self.button_tongyirudui_img = cv2.cvtColor(cv2.imread("images/button_tongyirudui.png"),cv2.COLOR_BGR2GRAY)
 
         self.button_close_img_color = cv2.cvtColor(cv2.imread("images/button_close.png"), cv2.IMREAD_COLOR)
+        self.icon_duiwu_shenqing1_img_color = cv2.cvtColor(cv2.imread("images/icon_duiwu_shenqing1.png"),
+                                                           cv2.IMREAD_COLOR)
+        self.icon_duiwu_shenqing2_img_color = cv2.cvtColor(cv2.imread("images/icon_duiwu_shenqing2.png"),
+                                                           cv2.IMREAD_COLOR)
 
     def get_status(self, hwnd, src_img=None):
         if src_img is None:
             src_img = capture(hwnd)
 
-        points = get_match_points(src_img, self.in_battle_img)
-        if points:
-            return "in_battle"
+        # points = get_match_points(src_img, self.in_battle_img)
+        # if points:
+        #     return "in_battle"
 
         # 点击空白关闭
         points = get_match_points(src_img, self.press_kongbaiguanbi_img)
@@ -93,12 +98,12 @@ class Task:
         #     click(hwnd, pos)
         #     return "click_queding"
 
-        # 30秒到时间，会自动挂智能技能，不要点自动
-        points = get_match_points(src_img, self.button_daoju_img)
-        if points:
-            # pos = (814, 445)
-            # click(hwnd, pos)
-            return "in_battle"
+        # # 30秒到时间，会自动挂智能技能，不要点自动
+        # points = get_match_points(src_img, self.button_daoju_img)
+        # if points:
+        #     # pos = (814, 445)
+        #     # click(hwnd, pos)
+        #     return "in_battle"
 
         # 匹配状态
         points = get_match_points(src_img, self.button_duiwu_pipei_img)
@@ -118,6 +123,54 @@ class Task:
             pos = (px + 7, py + 7)
             click(hwnd, pos)
             return "close_window"
+
+        # 有人申请加入队伍，队伍收缩
+        points = get_match_points(src_img_color, self.icon_duiwu_shenqing1_img_color)
+        if points:
+            # 展开任务栏,也有可能是正在匹配
+            print("展开任务栏")
+            pos = (837, 229)
+            click(hwnd, pos)
+            return "zhankai_duiwulan"
+
+        # 有人申请加入队伍，队伍栏已展开
+        points = get_match_points(src_img_color, self.icon_duiwu_shenqing2_img_color)
+        if points:
+            print("有人申请加入队伍")
+            src_img = capture(hwnd)
+            points = get_match_points(src_img, self.button_renwu_img, threshold=0.96)
+            if points:
+                print("点两下，打开队伍")
+                # 点开队伍,点两下
+                pos = (838, 172)
+                click(hwnd, pos)
+                time.sleep(random.uniform(0.4, 0.6))
+                click(hwnd, pos)
+            else:
+                points = get_match_points(src_img, self.button_duiwu_img, threshold=0.96)
+                if points:
+                    print("点一下，打开队伍")
+                    # 点开队伍,点一下
+                    pos = (838, 172)
+                    click(hwnd, pos)
+                else:
+                    print("未能发现队伍按钮")
+                    return "error"
+            # 允许加入队伍
+            time.sleep(random.uniform(0.8, 1.2))
+            src_img = capture(hwnd)
+            points = get_match_points(src_img, self.button_tongyirudui_img)
+            points = get_clean_points(points)
+            if points:
+                print("点同意入队")
+                px, py = points[0]
+                pos = (px + 30, py + 5)
+                click(hwnd, pos)
+                time.sleep(random.uniform(0.4, 0.6))
+                # 点清空列表
+                pos = (486, 399)
+                click(hwnd, pos, 30, 10)
+            return "access_join"
 
         time.sleep(1)
         src_img2 = capture(hwnd)
@@ -352,7 +405,8 @@ class Task:
             points = get_match_points(src_img, self.duihua_zhenmo_end_img,threshold=0.85)
             if points:
                 print("镇魔结束")
-                return
+                #return
+                continue
 
             # 接取任务
             points = get_match_points(src_img, self.duihua_jiequ_img)
