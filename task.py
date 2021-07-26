@@ -1,3 +1,4 @@
+import sys
 from datetime import datetime
 
 from utils.base import *
@@ -41,6 +42,7 @@ class Task:
         self.button_queding_paiwei_img = cv2.cvtColor(cv2.imread("images/button_queding_paiwei.png"), cv2.COLOR_BGR2GRAY)
         self.duihua_zhenmo_end_img = cv2.cvtColor(cv2.imread("images/duihua_zhenmo_end.png"), cv2.COLOR_BGR2GRAY)
         self.button_tongyirudui_img = cv2.cvtColor(cv2.imread("images/button_tongyirudui.png"),cv2.COLOR_BGR2GRAY)
+        self.xiayi_end_img = cv2.cvtColor(cv2.imread("images/xiayi_end.png"), cv2.COLOR_BGR2GRAY)
 
         self.button_close_img_color = cv2.cvtColor(cv2.imread("images/button_close.png"), cv2.IMREAD_COLOR)
         self.icon_duiwu_shenqing1_img_color = cv2.cvtColor(cv2.imread("images/icon_duiwu_shenqing1.png"),
@@ -121,8 +123,18 @@ class Task:
             click(hwnd, pos)
             return "close_window"
 
+        left = 793
+        top = 112
+        w = 68
+        h = 150
+        opponent_img_color = src_img_color[top:top + h, left:left + w]
+
+        # cv2.namedWindow("Image")
+        # cv2.imshow("Image", opponent_img_color)
+        # cv2.waitKey(0)
+        # sys.exit(1)
         # 有人申请加入队伍，队伍收缩
-        points = get_match_points(src_img_color, self.icon_duiwu_shenqing1_img_color)
+        points = get_match_points(opponent_img_color, self.icon_duiwu_shenqing1_img_color)
         if points:
             # 展开任务栏,也有可能是正在匹配
             print("展开任务栏")
@@ -131,7 +143,7 @@ class Task:
             return "zhankai_duiwulan"
 
         # 有人申请加入队伍，队伍栏已展开
-        points = get_match_points(src_img_color, self.icon_duiwu_shenqing2_img_color)
+        points = get_match_points(opponent_img_color, self.icon_duiwu_shenqing2_img_color)
         if points:
             print("有人申请加入队伍")
             src_img = capture(hwnd)
@@ -208,10 +220,22 @@ class Task:
             return "moving"
 
     def run_xiayi(self):
+        is_end = {}
+        for hwnd in self.hwnd_list:
+            is_end[hwnd] = False
         while True:
+            is_all_end = True
+            for hwnd in self.hwnd_list:
+                if not is_end[hwnd]:
+                    is_all_end = False
+            if is_all_end:
+                print("结束侠义任务")
+                return
             for hwnd in self.hwnd_list:
                 time.sleep(random.uniform(settings.inverval_min, settings.inverval_max))
 
+                if is_end[hwnd]:
+                    continue
                 # cv2.namedWindow("Image")
                 # cv2.imshow("Image", src_img)
                 # cv2.waitKey(0)
@@ -221,6 +245,11 @@ class Task:
                     continue
 
                 src_img = capture(hwnd)
+                points = get_match_points(src_img, self.xiayi_end_img)
+                if points:
+                    is_end[hwnd] = True
+                    continue
+
                 # 未知对话，点
                 points = get_match_points(src_img, self.duihua_duihua_img)
                 if points:

@@ -6,6 +6,7 @@ from datetime import datetime
 from multiprocessing import Process
 
 from utils.base import *
+from utils.wechat import senddata
 from task import Task
 
 
@@ -166,7 +167,7 @@ class AppUI:
                                              'warning')
                         self.msg_list.see("end")
                         if self.running not in ["组队离队", ""]:
-                            # senddata("{}已结束。结束时间:{}".format(self.running, str(datetime.now())), "")
+                            senddata("{}已结束。结束时间:{}".format(self.running, str(datetime.now())), "")
                             pass
                     else:
                         # 自己手动关闭的，不用发送通知
