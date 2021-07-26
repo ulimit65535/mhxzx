@@ -1,10 +1,7 @@
-import cv2
-import time
-import random
-import sys
+from datetime import datetime
 
-from etc import settings
 from utils.base import *
+from utils.wechat import senddata
 
 
 class Task:
@@ -404,8 +401,9 @@ class Task:
 
             points = get_match_points(src_img, self.duihua_zhenmo_end_img,threshold=0.85)
             if points:
-                print("镇魔结束")
+                print("镇魔次数已用尽")
                 #return
+                senddata("镇魔次数已用尽，但仍开始新的一轮:{}".format(str(datetime.now())), "")
                 continue
 
             # 接取任务
