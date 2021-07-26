@@ -404,7 +404,6 @@ class Task:
                 print("镇魔次数已用尽")
                 #return
                 senddata("镇魔次数已用尽，但仍开始新的一轮:{}".format(str(datetime.now())), "")
-                continue
 
             # 接取任务
             points = get_match_points(src_img, self.duihua_jiequ_img)
