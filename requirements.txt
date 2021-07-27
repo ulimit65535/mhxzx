@@ -3,3 +3,4 @@ psutil
 pypiwin32
 numpy
 pyautogui
+simplejson
