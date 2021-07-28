@@ -97,12 +97,12 @@ class Task:
         #     click(hwnd, pos)
         #     return "click_queding"
 
-        # # 30秒到时间，会自动挂智能技能，不要点自动
-        # points = get_match_points(src_img, self.button_daoju_img)
-        # if points:
-        #     # pos = (814, 445)
-        #     # click(hwnd, pos)
-        #     return "in_battle"
+        # 30秒到时间，会自动挂智能技能，不要点自动
+        points = get_match_points(src_img, self.button_daoju_img)
+        if points:
+            # pos = (814, 445)
+            # click(hwnd, pos)
+            return "in_battle"
 
         # 匹配状态
         points = get_match_points(src_img, self.button_duiwu_pipei_img)
