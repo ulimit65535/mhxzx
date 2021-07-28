@@ -92,7 +92,7 @@ def get_match_points(src_img, template_img, threshold=0.9):
     return points
 
 
-def get_clean_points(point_list):
+def get_clean_points(point_list, reverse=False):
     clean_point_list = []
     for point in point_list:
         x, y = point
@@ -104,6 +104,8 @@ def get_clean_points(point_list):
                 break
         if is_clean:
             clean_point_list.append(point)
+    if reverse:
+        clean_point_list.reverse()
     return clean_point_list
 
 """

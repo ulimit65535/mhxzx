@@ -337,7 +337,7 @@ class Task:
                 # 申请
                 points = get_match_points(src_img, self.button_shenqing_img)
                 if points:
-                    points = get_clean_points(points)
+                    points = get_clean_points(points, reverse=True)
                     for i in range(3):
                         try:
                             px, py = points[i]
