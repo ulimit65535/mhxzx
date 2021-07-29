@@ -149,14 +149,7 @@ class Task:
             print("有人申请加入队伍")
             src_img = capture(hwnd)
             points = get_match_points(src_img, self.button_renwu_img, threshold=0.96)
-            if points:
-                print("点两下，打开队伍")
-                # 点开队伍,点两下
-                pos = (838, 172)
-                click(hwnd, pos)
-                time.sleep(random.uniform(0.4, 0.6))
-                click(hwnd, pos)
-            else:
+            if not points:
                 points = get_match_points(src_img, self.button_duiwu_img, threshold=0.96)
                 if points:
                     print("点一下，打开队伍")
@@ -166,6 +159,7 @@ class Task:
                 else:
                     print("未能发现队伍按钮")
                     return "error"
+
             # 允许加入队伍
             time.sleep(random.uniform(0.8, 1.2))
             src_img = capture(hwnd)
@@ -246,7 +240,7 @@ class Task:
                     continue
 
                 src_img = capture(hwnd)
-                points = get_match_points(src_img, self.xiayi_end_img)
+                points = get_match_points(src_img, self.xiayi_end_img, threshold=0.85)
                 if points:
                     is_end[hwnd] = True
                     continue
@@ -275,14 +269,7 @@ class Task:
 
                 # 在野外挂机
                 points = get_match_points(src_img, self.button_renwu_img, threshold=0.96)
-                if points:
-                    print("点两下，打开队伍")
-                    # 点开队伍,点两下
-                    pos = (838, 172)
-                    click(hwnd, pos)
-                    time.sleep(random.uniform(0.4, 0.6))
-                    click(hwnd, pos)
-                else:
+                if not points:
                     points = get_match_points(src_img, self.button_duiwu_img, threshold=0.96)
                     if points:
                         print("点一下，打开队伍")
