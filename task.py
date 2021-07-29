@@ -148,18 +148,17 @@ class Task:
         points = get_match_points(opponent_img_color, self.icon_duiwu_shenqing2_img_color)
         if points:
             print("有人申请加入队伍")
-            src_img = capture(hwnd)
             points = get_match_points(src_img, self.button_renwu_img, threshold=0.96)
             if not points:
                 points = get_match_points(src_img, self.button_duiwu_img, threshold=0.96)
-                if points:
-                    print("点一下，打开队伍")
-                    # 点开队伍,点一下
-                    pos = (838, 172)
-                    click(hwnd, pos)
-                else:
-                    print("未能发现队伍按钮")
-                    return "error"
+            if points:
+                print("点一下，打开队伍")
+                # 点开队伍,点一下
+                pos = (838, 172)
+                click(hwnd, pos)
+            else:
+                print("任务栏未展开")
+                return "error"
 
             # 允许加入队伍
             time.sleep(random.uniform(0.8, 1.2))
