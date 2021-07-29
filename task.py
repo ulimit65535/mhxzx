@@ -215,22 +215,9 @@ class Task:
             return "moving"
 
     def run_xiayi(self):
-        is_end = {}
-        for hwnd in self.hwnd_list:
-            is_end[hwnd] = False
         while True:
-            is_all_end = True
-            for hwnd in self.hwnd_list:
-                if not is_end[hwnd]:
-                    is_all_end = False
-            if is_all_end:
-                print("结束侠义任务")
-                return
             for hwnd in self.hwnd_list:
                 time.sleep(random.uniform(settings.inverval_min, settings.inverval_max))
-
-                if is_end[hwnd]:
-                    continue
                 # cv2.namedWindow("Image")
                 # cv2.imshow("Image", src_img)
                 # cv2.waitKey(0)
@@ -239,10 +226,13 @@ class Task:
                 if status != "standing":
                     continue
 
-                src_img = capture(hwnd)
-                points = get_match_points(src_img, self.xiayi_end_img, threshold=0.85)
+                # 点击确定
+                points = get_match_points(src_img, self.button_queding_img)
                 if points:
-                    is_end[hwnd] = True
+                    print("点击确定")
+                    px, py = points[0]
+                    pos = (px + 40, py + 10)
+                    click(hwnd, pos)
                     continue
 
                 # 特殊场景，直接退出
@@ -331,6 +321,7 @@ class Task:
                             continue
 
                 # 侠义button
+                print("打开侠义窗口")
                 pos = (825, 379)
                 click(hwnd, pos)
                 time.sleep(random.uniform(1.0, 1.2))
@@ -345,16 +336,17 @@ class Task:
                     time.sleep(random.uniform(0.8, 1.2))
                     src_img = capture(hwnd)
                     points = get_match_points(src_img, self.button_shenqing_img)
-                    if points:
-                        points = get_clean_points(points, reverse=True)
-                        for i in range(3):
-                            try:
-                                px, py = points[i]
-                            except:
-                                break
-                            pos = (px + 30, py + 10)
-                            click(hwnd, pos)
-                            time.sleep(random.uniform(0.15, 0.2))
+                if points:
+                    print("点击申请")
+                    points = get_clean_points(points, reverse=True)
+                    for i in range(3):
+                        try:
+                            px, py = points[i]
+                        except:
+                            break
+                        pos = (px + 30, py + 10)
+                        click(hwnd, pos)
+                        time.sleep(random.uniform(0.15, 0.2))
 
     def run_yitiao_single(self):
         num_standing = 0
