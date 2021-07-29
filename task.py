@@ -350,16 +350,24 @@ class Task:
                 src_img = capture(hwnd)
                 # 申请
                 points = get_match_points(src_img, self.button_shenqing_img)
-                if points:
-                    points = get_clean_points(points, reverse=True)
-                    for i in range(3):
-                        try:
-                            px, py = points[i]
-                        except:
-                            break
-                        pos = (px + 30, py + 10)
-                        click(hwnd, pos)
-                        time.sleep(random.uniform(0.15, 0.2))
+                if not points:
+                    time.sleep(random.uniform(1.8, 2.2))
+                    # 点刷新
+                    pos = (713, 442)
+                    click(hwnd, pos, 25, 10)
+                    time.sleep(random.uniform(0.8, 1.2))
+                    src_img = capture(hwnd)
+                    points = get_match_points(src_img, self.button_shenqing_img)
+                    if points:
+                        points = get_clean_points(points, reverse=True)
+                        for i in range(3):
+                            try:
+                                px, py = points[i]
+                            except:
+                                break
+                            pos = (px + 30, py + 10)
+                            click(hwnd, pos)
+                            time.sleep(random.uniform(0.15, 0.2))
 
     def run_yitiao_single(self):
         num_standing = 0
