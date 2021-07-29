@@ -9,7 +9,8 @@ class Task:
     def __init__(self, hwnd_list):
         self.hwnd_list = hwnd_list
         self.button_xiayi_img = cv2.cvtColor(cv2.imread("images/button_xiayi.png"), cv2.COLOR_BGR2GRAY)
-        self.button_shenqing_img = cv2.cvtColor(cv2.imread("images/button_shenqing.png"), cv2.COLOR_BGR2GRAY)
+        #self.button_shenqing_img = cv2.cvtColor(cv2.imread("images/button_shenqing.png"), cv2.COLOR_BGR2GRAY)
+        self.icon_xingxiazhangyi_img = cv2.cvtColor(cv2.imread("images/icon_xingxiazhangyi.png"), cv2.COLOR_BGR2GRAY)
         self.button_chuangjianduiwu_img = cv2.cvtColor(cv2.imread("images/button_chuangjianduiwu.png"), cv2.COLOR_BGR2GRAY)
         self.button_likaiduiwu_img = cv2.cvtColor(cv2.imread("images/button_likaiduiwu.png"), cv2.COLOR_BGR2GRAY)
         self.window_likaiduiwu_img = cv2.cvtColor(cv2.imread("images/window_likaiduiwu.png"), cv2.COLOR_BGR2GRAY)
@@ -226,6 +227,7 @@ class Task:
                 if status != "standing":
                     continue
 
+                src_img = capture(hwnd)
                 # 点击确定
                 points = get_match_points(src_img, self.button_queding_img)
                 if points:
@@ -261,38 +263,37 @@ class Task:
                 points = get_match_points(src_img, self.button_renwu_img, threshold=0.96)
                 if not points:
                     points = get_match_points(src_img, self.button_duiwu_img, threshold=0.96)
-                    if points:
-                        print("点一下，打开队伍")
-                        # 点开队伍,点一下
-                        pos = (838, 172)
-                        click(hwnd, pos)
-                    else:
-                        # 展开任务栏,也有可能是正在匹配
-                        print("展开任务栏")
-                        pos = (837, 229)
-                        click(hwnd, pos)
-                        continue
+                if points:
+                    print("点一下，打开队伍")
+                    # 点开队伍,点一下
+                    pos = (838, 172)
+                    click(hwnd, pos)
+                else:
+                    # 展开任务栏,也有可能是正在匹配
+                    print("展开任务栏")
+                    pos = (837, 229)
+                    click(hwnd, pos)
+                    continue
 
                 # 等待队伍界面打开
-                time.sleep(random.uniform(1.8, 2.2))
+                time.sleep(random.uniform(1.0, 1.2))
                 src_img = capture(hwnd)
-                points = get_match_points(src_img, self.button_buzhen_img)
-                if not points:
-                    # 切换至队伍界面
-                    pos = (754, 107)
-                    click(hwnd, pos, 10, 10)
-                    time.sleep(random.uniform(1.0, 1.2))
-                    src_img = capture(hwnd)
-
-                # 不在队伍中
                 points = get_match_points(src_img, self.button_chuangjianduiwu_img)
                 if points:
                     print("不在队伍中")
                     # 关闭队伍窗口
                     pos = (834, 208)
                     click(hwnd, pos, 10, 40)
-                    time.sleep(random.uniform(1.8, 2.2))
                 else:
+                    print("在队伍中")
+                    points = get_match_points(src_img, self.button_buzhen_img)
+                    if not points:
+                        # 切换至队伍界面
+                        print("切换至队伍界面")
+                        pos = (754, 107)
+                        click(hwnd, pos, 10, 10)
+                        time.sleep(random.uniform(1.0, 1.2))
+                        src_img = capture(hwnd)
                     points = get_match_points(src_img, self.button_yaoqing_img)
                     if points:
                         # 人不满，离开队伍
@@ -315,11 +316,11 @@ class Task:
                                     time.sleep(random.uniform(0.5, 0.6))
                                     pos = (834, 208)
                                     click(hwnd, pos, 10, 40)
-                            time.sleep(random.uniform(1.8, 2.2))
                         else:
                             # 满员，继续等待
                             continue
 
+                time.sleep(random.uniform(1.0, 1.2))
                 # 侠义button
                 print("打开侠义窗口")
                 pos = (825, 379)
@@ -327,25 +328,26 @@ class Task:
                 time.sleep(random.uniform(1.0, 1.2))
                 src_img = capture(hwnd)
                 # 申请
-                points = get_match_points(src_img, self.button_shenqing_img)
+                points = get_match_points(src_img, self.icon_xingxiazhangyi_img)
                 if not points:
-                    time.sleep(random.uniform(1.8, 2.2))
+                    time.sleep(random.uniform(1.0, 1.2))
                     # 点刷新
                     pos = (713, 442)
                     click(hwnd, pos, 25, 10)
-                    time.sleep(random.uniform(0.8, 1.2))
+                    time.sleep(random.uniform(1.0, 1.2))
                     src_img = capture(hwnd)
-                    points = get_match_points(src_img, self.button_shenqing_img)
+                    points = get_match_points(src_img, self.icon_xingxiazhangyi_img)
                 if points:
                     print("点击申请")
-                    points = get_clean_points(points, reverse=True)
+                    points = get_clean_points(points, reverse=False)
                     for i in range(3):
                         try:
                             px, py = points[i]
                         except:
                             break
-                        pos = (px + 30, py + 10)
-                        click(hwnd, pos)
+                        #pos = (px + 30, py + 10)
+                        pos = (px + 426, py + 25)
+                        click(hwnd, pos, 25, 10)
                         time.sleep(random.uniform(0.15, 0.2))
 
     def run_yitiao_single(self):
