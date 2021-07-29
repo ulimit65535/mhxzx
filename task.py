@@ -43,6 +43,7 @@ class Task:
         self.duihua_zhenmo_end_img = cv2.cvtColor(cv2.imread("images/duihua_zhenmo_end.png"), cv2.COLOR_BGR2GRAY)
         self.button_tongyirudui_img = cv2.cvtColor(cv2.imread("images/button_tongyirudui.png"),cv2.COLOR_BGR2GRAY)
         self.xiayi_end_img = cv2.cvtColor(cv2.imread("images/xiayi_end.png"), cv2.COLOR_BGR2GRAY)
+        self.button_tuichu_img = cv2.cvtColor(cv2.imread("images/button_tuichu.png"), cv2.COLOR_BGR2GRAY)
 
         self.button_close_img_color = cv2.cvtColor(cv2.imread("images/button_close.png"), cv2.IMREAD_COLOR)
         self.icon_duiwu_shenqing1_img_color = cv2.cvtColor(cv2.imread("images/icon_duiwu_shenqing1.png"),
@@ -248,6 +249,19 @@ class Task:
                 points = get_match_points(src_img, self.xiayi_end_img)
                 if points:
                     is_end[hwnd] = True
+                    continue
+
+                # 特殊场景，直接退出
+                points = get_match_points(src_img, self.button_tuichu_img, threshold=0.88)
+                if points:
+                    print("退出特殊场景")
+                    px, py = points[0]
+                    pos = (px + 10, py + 20)
+                    click(hwnd, pos)
+                    # 等3s，点确定
+                    time.sleep(random.uniform(3.5, 4.0))
+                    pos = (498, 329)
+                    click(hwnd, pos, 30, 10)
                     continue
 
                 # 未知对话，点
