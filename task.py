@@ -315,8 +315,12 @@ class Task:
                                     time.sleep(random.uniform(0.5, 0.6))
                                     pos = (834, 208)
                                     click(hwnd, pos, 10, 40)
+                            else:
+                                print("满员，继续等待")
+                                # 满员，继续等待
+                                continue
                         else:
-                            # 满员，继续等待
+                            print("异常，未能找到离开队伍按钮")
                             continue
 
                 time.sleep(random.uniform(1.0, 1.2))
