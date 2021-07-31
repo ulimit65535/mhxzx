@@ -339,7 +339,7 @@ class Task:
                 if points:
                     print("点击申请")
                     points = get_clean_points(points, reverse=False)
-                    for i in range(3):
+                    for i in range(5):
                         try:
                             px, py = points[i]
                         except:
