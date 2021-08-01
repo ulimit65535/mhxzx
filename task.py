@@ -51,6 +51,7 @@ class Task:
                                                            cv2.IMREAD_COLOR)
         self.icon_duiwu_shenqing2_img_color = cv2.cvtColor(cv2.imread("images/icon_duiwu_shenqing2.png"),
                                                            cv2.IMREAD_COLOR)
+        self.xuelantiao_img_color = cv2.cvtColor(cv2.imread("images/xuelantiao.png"), cv2.IMREAD_COLOR)
 
     def get_status(self, hwnd, src_img=None):
         if src_img is None:
@@ -110,6 +111,13 @@ class Task:
         points = get_match_points(src_img, self.button_duiwu_pipei_img)
         if points:
             return "waiting_pipei"
+
+        points = get_match_points(src_img, self.duihua_zhandou_img)
+        if points:
+            px, py = points[0]
+            pos = (px + 40, py + 5)
+            click(hwnd, pos)
+            return "click_battle"
 
         points = get_match_points(src_img, self.duihua_likai_img, threshold=0.85)
         if points:
@@ -392,6 +400,7 @@ class Task:
     def run_wuxianzhenmo(self):
         hwnd = self.hwnd_list[0]
         num_standing = 0
+        is_new_battle = True
         while True:
             if num_standing >= 5:
                 src_img = capture(hwnd)
@@ -428,9 +437,20 @@ class Task:
             print(status)
             if status != "standing":
                 num_standing = 0
+                if status == "in_battle":
+                    # 新的一场战斗，查看队伍中的人数
+                    if is_new_battle:
+                        src_img_color = capture(hwnd, color=cv2.IMREAD_COLOR)
+                        points = get_match_points(src_img_color, self.xuelantiao_img_color, threshold=0.9)
+                        if points:
+                            points = get_clean_points(points)
+                            num_members = len(points) - 1
+                            print("队伍人数:{}".format(num_members))
+                        is_new_battle = False
                 continue
             else:
                 num_standing += 1
+                is_new_battle = True
 
             src_img = capture(hwnd)
 
