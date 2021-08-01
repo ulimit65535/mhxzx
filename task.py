@@ -45,13 +45,18 @@ class Task:
         self.button_tongyirudui_img = cv2.cvtColor(cv2.imread("images/button_tongyirudui.png"),cv2.COLOR_BGR2GRAY)
         self.xiayi_end_img = cv2.cvtColor(cv2.imread("images/xiayi_end.png"), cv2.COLOR_BGR2GRAY)
         self.button_tuichu_img = cv2.cvtColor(cv2.imread("images/button_tuichu.png"), cv2.COLOR_BGR2GRAY)
+        self.num_members_3_img = cv2.cvtColor(cv2.imread("images/num_members_3.png"), cv2.COLOR_BGR2GRAY)
+        self.num_members_4_img = cv2.cvtColor(cv2.imread("images/num_members_4.png"), cv2.COLOR_BGR2GRAY)
+        self.num_members_5_img = cv2.cvtColor(cv2.imread("images/num_members_5.png"), cv2.COLOR_BGR2GRAY)
+        self.num_members_3_2_img = cv2.cvtColor(cv2.imread("images/num_members_3_2.png"), cv2.COLOR_BGR2GRAY)
+        self.num_members_4_2_img = cv2.cvtColor(cv2.imread("images/num_members_4_2.png"), cv2.COLOR_BGR2GRAY)
+        self.num_members_5_2_img = cv2.cvtColor(cv2.imread("images/num_members_5_2.png"), cv2.COLOR_BGR2GRAY)
 
         self.button_close_img_color = cv2.cvtColor(cv2.imread("images/button_close.png"), cv2.IMREAD_COLOR)
         self.icon_duiwu_shenqing1_img_color = cv2.cvtColor(cv2.imread("images/icon_duiwu_shenqing1.png"),
                                                            cv2.IMREAD_COLOR)
         self.icon_duiwu_shenqing2_img_color = cv2.cvtColor(cv2.imread("images/icon_duiwu_shenqing2.png"),
                                                            cv2.IMREAD_COLOR)
-        self.xuelantiao_img_color = cv2.cvtColor(cv2.imread("images/xuelantiao.png"), cv2.IMREAD_COLOR)
 
     def get_status(self, hwnd, src_img=None):
         if src_img is None:
@@ -112,6 +117,7 @@ class Task:
         if points:
             return "waiting_pipei"
 
+        # 点战斗
         points = get_match_points(src_img, self.duihua_zhandou_img)
         if points:
             px, py = points[0]
@@ -401,6 +407,7 @@ class Task:
         hwnd = self.hwnd_list[0]
         num_standing = 0
         is_new_battle = True
+        num_members = None
         while True:
             if num_standing >= 5:
                 src_img = capture(hwnd)
@@ -440,13 +447,60 @@ class Task:
                 if status == "in_battle":
                     # 新的一场战斗，查看队伍中的人数
                     if is_new_battle:
-                        src_img_color = capture(hwnd, color=cv2.IMREAD_COLOR)
-                        points = get_match_points(src_img_color, self.xuelantiao_img_color, threshold=0.9)
-                        if points:
-                            points = get_clean_points(points)
-                            num_members = len(points) - 1
-                            print("队伍人数:{}".format(num_members))
+                        src_img = capture(hwnd)
+                        points = get_match_points(src_img, self.button_renwu_img, threshold=0.9)
+                        if not points:
+                            points = get_match_points(src_img, self.button_duiwu_img, threshold=0.9)
+                        if not points:
+                            # 展开任务栏
+                            print("展开任务栏")
+                            pos = (837, 229)
+                            click(hwnd, pos)
+                            continue
+
+                        left = 793
+                        top = 112
+                        w = 68
+                        h = 150
+                        opponent_img = src_img[top:top + h, left:left + w]
+
+                        # cv2.namedWindow("Image")
+                        # cv2.imshow("Image", opponent_img)
+                        # cv2.waitKey(0)
+                        # sys.exit(1)
+
                         is_new_battle = False
+
+                        points = get_match_points(opponent_img, self.num_members_3_img, threshold=0.95)
+                        if not points:
+                            points = get_match_points(opponent_img, self.num_members_3_2_img, threshold=0.95)
+                        if points:
+                            num = 3
+                        else:
+                            points = get_match_points(opponent_img, self.num_members_4_img, threshold=0.95)
+                            if not points:
+                                points = get_match_points(opponent_img, self.num_members_4_2_img, threshold=0.95)
+                            if points:
+                                num = 4
+                            else:
+                                points = get_match_points(opponent_img, self.num_members_5_img, threshold=0.95)
+                                if not points:
+                                    points = get_match_points(opponent_img, self.num_members_5_2_img, threshold=0.95)
+                                if points:
+                                    num = 5
+                                else:
+                                    print("未能获取队伍人数")
+                                    num = None
+                        if num:
+                            print("当前队伍人数:{}".format(num))
+                            if num_members is None:
+                                num_members = num
+                            else:
+                                if num < num_members:
+                                    senddata("队伍人数减少，当前队伍人数:{}".format(num), "")
+                                    num_members = num
+                else:
+                    is_new_battle = True
                 continue
             else:
                 num_standing += 1
