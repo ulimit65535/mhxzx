@@ -492,13 +492,14 @@ class Task:
                                     print("未能获取队伍人数")
                                     num = None
                         if num:
-                            print("当前队伍人数:{}".format(num))
                             if num_members is None:
                                 num_members = num
-                            else:
-                                if num < num_members:
-                                    senddata("队伍人数减少，当前队伍人数:{}".format(num), "")
-                                    num_members = num
+                            print("之前队伍人数:{}".format(num_members))
+                            print("当前队伍人数:{}".format(num))
+                            if num < num_members:
+                                print("队伍人数减少，发送通知")
+                                senddata("队伍人数减少，当前队伍人数:{}".format(num), "")
+                            num_members = num
                 else:
                     is_new_battle = True
                 continue
