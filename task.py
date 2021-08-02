@@ -45,6 +45,8 @@ class Task:
         self.button_tongyirudui_img = cv2.cvtColor(cv2.imread("images/button_tongyirudui.png"),cv2.COLOR_BGR2GRAY)
         self.xiayi_end_img = cv2.cvtColor(cv2.imread("images/xiayi_end.png"), cv2.COLOR_BGR2GRAY)
         self.button_tuichu_img = cv2.cvtColor(cv2.imread("images/button_tuichu.png"), cv2.COLOR_BGR2GRAY)
+        self.button_qianwangtiaozhan_img = cv2.cvtColor(cv2.imread("images/button_qianwangtiaozhan.png"),
+                                                        cv2.COLOR_BGR2GRAY)
 
         self.button_close_img_color = cv2.cvtColor(cv2.imread("images/button_close.png"), cv2.IMREAD_COLOR)
         self.icon_duiwu_shenqing1_img_color = cv2.cvtColor(cv2.imread("images/icon_duiwu_shenqing1.png"),
@@ -201,9 +203,17 @@ class Task:
             click(hwnd, pos)
             return "click_battle"
 
+        # 话本，点前往挑战
+        points = get_match_points(src_img, self.button_qianwangtiaozhan_img)
+        if points:
+            print("点前往挑战")
+            px, py = points[0]
+            pos = (px + 50, py + 15)
+            click(hwnd, pos)
+
         points = get_match_points(src_img, self.duihua_likai_img, threshold=0.85)
         if points:
-            print("对话选项")
+            print("对话选项，get_status不做操作")
             return "standing"
 
         # 关闭侠义窗口
@@ -293,9 +303,11 @@ class Task:
 
                 points = get_match_points(src_img3, self.button_beibao_img)
                 if not points:
-                    pos = (172, 266)
-                    click(hwnd, pos, 30, 30)
                     print("跳过对话")
+                    for i in range(5):
+                        pos = (172, 266)
+                        click(hwnd, pos, 30, 30)
+                        time.sleep(random.uniform(0.2, 0.3))
                     return "standing"
                 else:
                     return "standing"
@@ -523,6 +535,61 @@ class Task:
             # 接取任务
             points = get_match_points(src_img, self.duihua_jiequ_img)
             if points:
+                px, py = points[0]
+                pos = (px + 40, py + 5)
+                click(hwnd, pos)
+                continue
+
+            points = get_match_points(src_img, self.duihua_jitianxia_img)
+            if points:
+                print("与计天下对话")
+                px, py = points[0]
+                pos = (px + 40, py + 5)
+                click(hwnd, pos)
+                time.sleep(random.uniform(1.0, 1.2))
+                continue
+
+            points = get_match_points(src_img, self.duihua_queding_img)
+            if points:
+                print("点确定")
+                px, py = points[0]
+                pos = (px + 40, py + 5)
+                click(hwnd, pos)
+                continue
+
+    def run_zudui_yitiao(self):
+        hwnd = self.hwnd_list[0]
+        num_standing = 0
+        while True:
+            if num_standing >= 20:
+                print("等待时间过长，结束")
+                return
+
+            time.sleep(random.uniform(settings.inverval_min, settings.inverval_max))
+
+            status = self.get_status(hwnd)
+            print(status)
+            if status != "standing":
+                num_standing = 0
+                continue
+            else:
+                num_standing += 1
+
+            src_img = capture(hwnd)
+
+            # 接取任务
+            points = get_match_points(src_img, self.duihua_jiequ_img)
+            if points:
+                print("点接取任务")
+                px, py = points[0]
+                pos = (px + 40, py + 5)
+                click(hwnd, pos)
+                continue
+
+            # 点前往参与
+            points = get_match_points(src_img, self.duihua_qianwangcanyu_img)
+            if points:
+                print("点前往参与")
                 px, py = points[0]
                 pos = (px + 40, py + 5)
                 click(hwnd, pos)

@@ -10,8 +10,8 @@ from utils.wechat import senddata
 from task import Task
 
 
-def run_task(hwnd, task_name):
-    task = Task(hwnd)
+def run_task(hwnd_list, task_name):
+    task = Task(hwnd_list)
     print(task_name)
     if task_name == "刷侠义":
         task.run_xiayi()
@@ -23,6 +23,8 @@ def run_task(hwnd, task_name):
         task.run_caiji()
     elif task_name == "自动确定":
         task.run_zidong_queding()
+    elif task_name == "组队一条":
+        task.run_zudui_yitiao()
 
 
 class AppUI:
