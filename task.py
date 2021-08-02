@@ -74,10 +74,10 @@ class Task:
         if points:
             # 切换至队伍显示
             print("切换至队伍显示")
-            pos = (838, 172)
+            pos = (838, 162)
             click(hwnd, pos)
             time.sleep(random.uniform(0.6, 0.8))
-            pos = (808, 172)
+            pos = (810, 230)
             click(hwnd, pos)
             time.sleep(random.uniform(1.0, 1.2))
             src_img_color = capture(hwnd, color=cv2.IMREAD_COLOR)
@@ -94,10 +94,10 @@ class Task:
                 if points:
                     # 切换至队伍显示
                     print("切换至队伍显示")
-                    pos = (838, 172)
+                    pos = (838, 162)
                     click(hwnd, pos)
                     time.sleep(random.uniform(0.6, 0.8))
-                    pos = (808, 172)
+                    pos = (810, 230)
                     click(hwnd, pos)
                     time.sleep(random.uniform(1.0, 1.2))
                     src_img_color = capture(hwnd, color=cv2.IMREAD_COLOR)
