@@ -45,65 +45,93 @@ class Task:
         self.button_tongyirudui_img = cv2.cvtColor(cv2.imread("images/button_tongyirudui.png"),cv2.COLOR_BGR2GRAY)
         self.xiayi_end_img = cv2.cvtColor(cv2.imread("images/xiayi_end.png"), cv2.COLOR_BGR2GRAY)
         self.button_tuichu_img = cv2.cvtColor(cv2.imread("images/button_tuichu.png"), cv2.COLOR_BGR2GRAY)
-        self.num_members_1_img = cv2.cvtColor(cv2.imread("images/num_members_1.png"), cv2.COLOR_BGR2GRAY)
-        self.num_members_2_img = cv2.cvtColor(cv2.imread("images/num_members_2.png"), cv2.COLOR_BGR2GRAY)
-        self.num_members_3_img = cv2.cvtColor(cv2.imread("images/num_members_3.png"), cv2.COLOR_BGR2GRAY)
-        self.num_members_4_img = cv2.cvtColor(cv2.imread("images/num_members_4.png"), cv2.COLOR_BGR2GRAY)
-        self.num_members_5_img = cv2.cvtColor(cv2.imread("images/num_members_5.png"), cv2.COLOR_BGR2GRAY)
-        self.num_members_1_2_img = cv2.cvtColor(cv2.imread("images/num_members_1_2.png"), cv2.COLOR_BGR2GRAY)
-        self.num_members_2_2_img = cv2.cvtColor(cv2.imread("images/num_members_2_2.png"), cv2.COLOR_BGR2GRAY)
-        self.num_members_3_2_img = cv2.cvtColor(cv2.imread("images/num_members_3_2.png"), cv2.COLOR_BGR2GRAY)
-        self.num_members_4_2_img = cv2.cvtColor(cv2.imread("images/num_members_4_2.png"), cv2.COLOR_BGR2GRAY)
-        self.num_members_5_2_img = cv2.cvtColor(cv2.imread("images/num_members_5_2.png"), cv2.COLOR_BGR2GRAY)
 
         self.button_close_img_color = cv2.cvtColor(cv2.imread("images/button_close.png"), cv2.IMREAD_COLOR)
         self.icon_duiwu_shenqing1_img_color = cv2.cvtColor(cv2.imread("images/icon_duiwu_shenqing1.png"),
                                                            cv2.IMREAD_COLOR)
         self.icon_duiwu_shenqing2_img_color = cv2.cvtColor(cv2.imread("images/icon_duiwu_shenqing2.png"),
                                                            cv2.IMREAD_COLOR)
+        self.num_members_1_img_color = cv2.cvtColor(cv2.imread("images/num_members_1.png"), cv2.IMREAD_COLOR)
+        self.num_members_2_img_color = cv2.cvtColor(cv2.imread("images/num_members_2.png"), cv2.IMREAD_COLOR)
+        self.num_members_3_img_color = cv2.cvtColor(cv2.imread("images/num_members_3.png"), cv2.IMREAD_COLOR)
+        self.num_members_4_img_color = cv2.cvtColor(cv2.imread("images/num_members_4.png"), cv2.IMREAD_COLOR)
+        self.num_members_5_img_color = cv2.cvtColor(cv2.imread("images/num_members_5.png"), cv2.IMREAD_COLOR)
+        self.button_renwu_img_color = cv2.cvtColor(cv2.imread("images/button_renwu.png"), cv2.IMREAD_COLOR)
+        self.button_duiwu_img_color = cv2.cvtColor(cv2.imread("images/button_duiwu.png"), cv2.IMREAD_COLOR)
+        self.button_daoju_img_color = cv2.cvtColor(cv2.imread("images/button_daoju.png"), cv2.IMREAD_COLOR)
 
-    def get_members_num(self, hwnd, src_img=None):
-        if src_img is None:
-            src_img = capture(hwnd)
+    def get_members_num(self, hwnd):
+        src_img_color = capture(hwnd, color=cv2.IMREAD_COLOR)
+
+        # 在战斗准备状态
+        points = get_match_points(src_img_color, self.button_daoju_img_color)
+        if points:
+            # 在战斗准备状态
+            print("战斗准备状态，无法获取队伍人数")
+            return None
+
+        points = get_match_points(src_img_color, self.button_renwu_img_color, threshold=0.96)
+        if points:
+            # 切换至队伍显示
+            print("切换至队伍显示")
+            pos = (838, 172)
+            click(hwnd, pos)
+            time.sleep(random.uniform(0.6, 0.8))
+            pos = (808, 172)
+            click(hwnd, pos)
+            time.sleep(random.uniform(1.0, 1.2))
+            src_img_color = capture(hwnd, color=cv2.IMREAD_COLOR)
+        else:
+            points = get_match_points(src_img_color, self.button_duiwu_img_color, threshold=0.96)
+            if not points:
+                # 展开任务栏
+                print("展开任务栏")
+                pos = (837, 229)
+                click(hwnd, pos)
+                time.sleep(random.uniform(1.0, 1.2))
+                src_img_color = capture(hwnd, color=cv2.IMREAD_COLOR)
+                points = get_match_points(src_img_color, self.button_renwu_img_color, threshold=0.96)
+                if points:
+                    # 切换至队伍显示
+                    print("切换至队伍显示")
+                    pos = (838, 172)
+                    click(hwnd, pos)
+                    time.sleep(random.uniform(0.6, 0.8))
+                    pos = (808, 172)
+                    click(hwnd, pos)
+                    time.sleep(random.uniform(1.0, 1.2))
+                    src_img_color = capture(hwnd, color=cv2.IMREAD_COLOR)
 
         left = 793
         top = 112
         w = 68
         h = 150
-        opponent_img = src_img[top:top + h, left:left + w]
+        opponent_img_color = src_img_color[top:top + h, left:left + w]
 
-        points = get_match_points(opponent_img, self.num_members_1_img, threshold=0.95)
-        if not points:
-            points = get_match_points(opponent_img, self.num_members_1_2_img, threshold=0.95)
+        points = get_match_points(opponent_img_color, self.num_members_1_img_color, threshold=0.95)
         if points:
             num = 1
         else:
-            points = get_match_points(opponent_img, self.num_members_2_img, threshold=0.95)
-            if not points:
-                points = get_match_points(opponent_img, self.num_members_2_2_img, threshold=0.95)
+            points = get_match_points(opponent_img_color, self.num_members_2_img_color, threshold=0.95)
             if points:
                 num = 2
             else:
-                points = get_match_points(opponent_img, self.num_members_3_img, threshold=0.95)
-                if not points:
-                    points = get_match_points(opponent_img, self.num_members_3_2_img, threshold=0.95)
+                points = get_match_points(opponent_img_color, self.num_members_3_img_color, threshold=0.95)
                 if points:
                     num = 3
                 else:
-                    points = get_match_points(opponent_img, self.num_members_4_img, threshold=0.95)
-                    if not points:
-                        points = get_match_points(opponent_img, self.num_members_4_2_img, threshold=0.95)
+                    points = get_match_points(opponent_img_color, self.num_members_4_img_color, threshold=0.95)
                     if points:
                         num = 4
                     else:
-                        points = get_match_points(opponent_img, self.num_members_5_img, threshold=0.95)
-                        if not points:
-                            points = get_match_points(opponent_img, self.num_members_5_2_img, threshold=0.95)
+                        points = get_match_points(opponent_img_color, self.num_members_5_img_color, threshold=0.95)
                         if points:
                             num = 5
                         else:
-                            print("未能获取队伍人数")
-                            num = None
+                            print("不在队伍中")
+                            num = 0
+        if num:
+            print("当前队伍人数:{}".format(num))
         return num
 
     def get_status(self, hwnd, src_img=None):
@@ -320,21 +348,41 @@ class Task:
                     click(hwnd, pos)
                     continue
 
-                # 展开任务栏
-                points = get_match_points(src_img, self.button_renwu_img, threshold=0.9)
-                if not points:
-                    points = get_match_points(src_img, self.button_duiwu_img, threshold=0.9)
-                if not points:
-                    # 展开任务栏
-                    print("展开任务栏")
-                    pos = (837, 229)
-                    click(hwnd, pos)
+                num = self.get_members_num(hwnd)
+                if num is None:
+                    print("无法获取队伍人数，继续等待")
                     continue
-
-                num = self.get_members_num(hwnd, src_img)
-                if num:
+                else:
                     # 人不满，离开队伍
-                    if num < 5:
+                    if num == 0:
+                        print("不在队伍中，打开侠义窗口")
+                        pos = (825, 379)
+                        click(hwnd, pos)
+                        time.sleep(random.uniform(1.0, 1.2))
+                        src_img = capture(hwnd)
+                        # 申请
+                        points = get_match_points(src_img, self.icon_xingxiazhangyi_img)
+                        if not points:
+                            time.sleep(random.uniform(1.0, 1.2))
+                            # 点刷新
+                            pos = (713, 442)
+                            click(hwnd, pos, 25, 10)
+                            time.sleep(random.uniform(1.0, 1.2))
+                            src_img = capture(hwnd)
+                            points = get_match_points(src_img, self.icon_xingxiazhangyi_img)
+                        if points:
+                            print("点击申请")
+                            points = get_clean_points(points, reverse=True)
+                            for i in range(5):
+                                try:
+                                    px, py = points[i]
+                                except:
+                                    break
+                                # pos = (px + 30, py + 10)
+                                pos = (px + 426, py + 25)
+                                click(hwnd, pos, 25, 10)
+                                time.sleep(random.uniform(0.15, 0.2))
+                    elif num < 5:
                         print("点一下，打开队伍")
                         # 点开队伍,点一下
                         pos = (838, 172)
@@ -358,39 +406,13 @@ class Task:
                                 time.sleep(random.uniform(0.5, 0.6))
                                 pos = (834, 208)
                                 click(hwnd, pos, 10, 40)
+                            continue
                         else:
                             print("未能找到离开队伍按钮")
                             continue
-
-                time.sleep(random.uniform(1.0, 1.2))
-                # 侠义button
-                print("打开侠义窗口")
-                pos = (825, 379)
-                click(hwnd, pos)
-                time.sleep(random.uniform(1.0, 1.2))
-                src_img = capture(hwnd)
-                # 申请
-                points = get_match_points(src_img, self.icon_xingxiazhangyi_img)
-                if not points:
-                    time.sleep(random.uniform(1.0, 1.2))
-                    # 点刷新
-                    pos = (713, 442)
-                    click(hwnd, pos, 25, 10)
-                    time.sleep(random.uniform(1.0, 1.2))
-                    src_img = capture(hwnd)
-                    points = get_match_points(src_img, self.icon_xingxiazhangyi_img)
-                if points:
-                    print("点击申请")
-                    points = get_clean_points(points, reverse=True)
-                    for i in range(5):
-                        try:
-                            px, py = points[i]
-                        except:
-                            break
-                        #pos = (px + 30, py + 10)
-                        pos = (px + 426, py + 25)
-                        click(hwnd, pos, 25, 10)
-                        time.sleep(random.uniform(0.15, 0.2))
+                    else:
+                        print("队伍满员，继续等待")
+                        continue
 
     def run_yitiao_single(self):
         num_standing = 0
@@ -472,20 +494,8 @@ class Task:
                 if status == "in_battle":
                     # 新的一场战斗，查看队伍中的人数
                     if is_new_battle:
-                        src_img = capture(hwnd)
-                        points = get_match_points(src_img, self.button_renwu_img, threshold=0.9)
-                        if not points:
-                            points = get_match_points(src_img, self.button_duiwu_img, threshold=0.9)
-                        if not points:
-                            # 展开任务栏
-                            print("展开任务栏")
-                            pos = (837, 229)
-                            click(hwnd, pos)
-                            continue
-
                         is_new_battle = False
-
-                        num = self.get_members_num(hwnd, src_img)
+                        num = self.get_members_num(hwnd)
                         if num:
                             if num_members is None:
                                 num_members = num
