@@ -45,9 +45,13 @@ class Task:
         self.button_tongyirudui_img = cv2.cvtColor(cv2.imread("images/button_tongyirudui.png"),cv2.COLOR_BGR2GRAY)
         self.xiayi_end_img = cv2.cvtColor(cv2.imread("images/xiayi_end.png"), cv2.COLOR_BGR2GRAY)
         self.button_tuichu_img = cv2.cvtColor(cv2.imread("images/button_tuichu.png"), cv2.COLOR_BGR2GRAY)
+        self.num_members_1_img = cv2.cvtColor(cv2.imread("images/num_members_1.png"), cv2.COLOR_BGR2GRAY)
+        self.num_members_2_img = cv2.cvtColor(cv2.imread("images/num_members_2.png"), cv2.COLOR_BGR2GRAY)
         self.num_members_3_img = cv2.cvtColor(cv2.imread("images/num_members_3.png"), cv2.COLOR_BGR2GRAY)
         self.num_members_4_img = cv2.cvtColor(cv2.imread("images/num_members_4.png"), cv2.COLOR_BGR2GRAY)
         self.num_members_5_img = cv2.cvtColor(cv2.imread("images/num_members_5.png"), cv2.COLOR_BGR2GRAY)
+        self.num_members_1_2_img = cv2.cvtColor(cv2.imread("images/num_members_1_2.png"), cv2.COLOR_BGR2GRAY)
+        self.num_members_2_2_img = cv2.cvtColor(cv2.imread("images/num_members_2_2.png"), cv2.COLOR_BGR2GRAY)
         self.num_members_3_2_img = cv2.cvtColor(cv2.imread("images/num_members_3_2.png"), cv2.COLOR_BGR2GRAY)
         self.num_members_4_2_img = cv2.cvtColor(cv2.imread("images/num_members_4_2.png"), cv2.COLOR_BGR2GRAY)
         self.num_members_5_2_img = cv2.cvtColor(cv2.imread("images/num_members_5_2.png"), cv2.COLOR_BGR2GRAY)
@@ -57,6 +61,50 @@ class Task:
                                                            cv2.IMREAD_COLOR)
         self.icon_duiwu_shenqing2_img_color = cv2.cvtColor(cv2.imread("images/icon_duiwu_shenqing2.png"),
                                                            cv2.IMREAD_COLOR)
+
+    def get_members_num(self, hwnd, src_img=None):
+        if src_img is None:
+            src_img = capture(hwnd)
+
+        left = 793
+        top = 112
+        w = 68
+        h = 150
+        opponent_img = src_img[top:top + h, left:left + w]
+
+        points = get_match_points(opponent_img, self.num_members_1_img, threshold=0.95)
+        if not points:
+            points = get_match_points(opponent_img, self.num_members_1_2_img, threshold=0.95)
+        if points:
+            num = 1
+        else:
+            points = get_match_points(opponent_img, self.num_members_2_img, threshold=0.95)
+            if not points:
+                points = get_match_points(opponent_img, self.num_members_2_2_img, threshold=0.95)
+            if points:
+                num = 2
+            else:
+                points = get_match_points(opponent_img, self.num_members_3_img, threshold=0.95)
+                if not points:
+                    points = get_match_points(opponent_img, self.num_members_3_2_img, threshold=0.95)
+                if points:
+                    num = 3
+                else:
+                    points = get_match_points(opponent_img, self.num_members_4_img, threshold=0.95)
+                    if not points:
+                        points = get_match_points(opponent_img, self.num_members_4_2_img, threshold=0.95)
+                    if points:
+                        num = 4
+                    else:
+                        points = get_match_points(opponent_img, self.num_members_5_img, threshold=0.95)
+                        if not points:
+                            points = get_match_points(opponent_img, self.num_members_5_2_img, threshold=0.95)
+                        if points:
+                            num = 5
+                        else:
+                            print("未能获取队伍人数")
+                            num = None
+        return num
 
     def get_status(self, hwnd, src_img=None):
         if src_img is None:
@@ -272,69 +320,46 @@ class Task:
                     click(hwnd, pos)
                     continue
 
-                # 在野外挂机
-                points = get_match_points(src_img, self.button_renwu_img, threshold=0.96)
+                # 展开任务栏
+                points = get_match_points(src_img, self.button_renwu_img, threshold=0.9)
                 if not points:
-                    points = get_match_points(src_img, self.button_duiwu_img, threshold=0.96)
-                if points:
-                    print("点一下，打开队伍")
-                    # 点开队伍,点一下
-                    pos = (838, 172)
-                    click(hwnd, pos)
-                else:
-                    # 展开任务栏,也有可能是正在匹配
+                    points = get_match_points(src_img, self.button_duiwu_img, threshold=0.9)
+                if not points:
+                    # 展开任务栏
                     print("展开任务栏")
                     pos = (837, 229)
                     click(hwnd, pos)
                     continue
 
-                # 等待队伍界面打开
-                time.sleep(random.uniform(1.0, 1.2))
-                src_img = capture(hwnd)
-                points = get_match_points(src_img, self.button_chuangjianduiwu_img)
-                if points:
-                    print("不在队伍中")
-                    # 关闭队伍窗口
-                    pos = (834, 208)
-                    click(hwnd, pos, 10, 40)
-                else:
-                    print("在队伍中")
-                    points = get_match_points(src_img, self.button_buzhen_img)
-                    if not points:
-                        # 切换至队伍界面
-                        print("切换至队伍界面")
-                        pos = (754, 107)
-                        click(hwnd, pos, 10, 10)
+                num = self.get_members_num(hwnd, src_img)
+                if num:
+                    # 人不满，离开队伍
+                    if num < 5:
+                        print("点一下，打开队伍")
+                        # 点开队伍,点一下
+                        pos = (838, 172)
+                        click(hwnd, pos)
+                        # 等待队伍界面打开
                         time.sleep(random.uniform(1.0, 1.2))
                         src_img = capture(hwnd)
-                    points = get_match_points(src_img, self.button_yaoqing_img)
-                    if points:
-                        # 人不满，离开队伍
                         points = get_match_points(src_img, self.button_likaiduiwu_img)
                         if points:
                             print("离开队伍")
                             px, py = points[0]
-                            # 查看队伍是否满员
-                            points = get_match_points(src_img, self.button_yaoqing_img)
+                            # 退出队伍
+                            pos = (px + 50, py + 10)
+                            click(hwnd, pos)
+                            time.sleep(0.5)
+                            src_img = capture(hwnd)
+                            points = get_match_points(src_img, self.window_likaiduiwu_img)
                             if points:
-                                # 未满员，退出队伍
-                                pos = (px + 50, py + 10)
-                                click(hwnd, pos)
-                                time.sleep(0.5)
-                                src_img = capture(hwnd)
-                                points = get_match_points(src_img, self.window_likaiduiwu_img)
-                                if points:
-                                    pos = (493, 329)
-                                    click(hwnd, pos, 30, 10)
-                                    time.sleep(random.uniform(0.5, 0.6))
-                                    pos = (834, 208)
-                                    click(hwnd, pos, 10, 40)
-                            else:
-                                print("满员，继续等待")
-                                # 满员，继续等待
-                                continue
+                                pos = (493, 329)
+                                click(hwnd, pos, 30, 10)
+                                time.sleep(random.uniform(0.5, 0.6))
+                                pos = (834, 208)
+                                click(hwnd, pos, 10, 40)
                         else:
-                            print("异常，未能找到离开队伍按钮")
+                            print("未能找到离开队伍按钮")
                             continue
 
                 time.sleep(random.uniform(1.0, 1.2))
@@ -458,39 +483,9 @@ class Task:
                             click(hwnd, pos)
                             continue
 
-                        left = 793
-                        top = 112
-                        w = 68
-                        h = 150
-                        opponent_img = src_img[top:top + h, left:left + w]
-
-                        # cv2.namedWindow("Image")
-                        # cv2.imshow("Image", opponent_img)
-                        # cv2.waitKey(0)
-                        # sys.exit(1)
-
                         is_new_battle = False
 
-                        points = get_match_points(opponent_img, self.num_members_3_img, threshold=0.95)
-                        if not points:
-                            points = get_match_points(opponent_img, self.num_members_3_2_img, threshold=0.95)
-                        if points:
-                            num = 3
-                        else:
-                            points = get_match_points(opponent_img, self.num_members_4_img, threshold=0.95)
-                            if not points:
-                                points = get_match_points(opponent_img, self.num_members_4_2_img, threshold=0.95)
-                            if points:
-                                num = 4
-                            else:
-                                points = get_match_points(opponent_img, self.num_members_5_img, threshold=0.95)
-                                if not points:
-                                    points = get_match_points(opponent_img, self.num_members_5_2_img, threshold=0.95)
-                                if points:
-                                    num = 5
-                                else:
-                                    print("未能获取队伍人数")
-                                    num = None
+                        num = self.get_members_num(hwnd, src_img)
                         if num:
                             print("当前队伍人数:{}".format(num))
                             if num_members is None:
