@@ -213,7 +213,7 @@ class Task:
             click(hwnd, pos)
             return "click_qianwangtiaozhan"
 
-        points = get_match_points(src_img, self.duihua_likai_img, threshold=0.85)
+        points = get_match_points(src_img, self.duihua_duihua_img)
         if points:
             print("对话选项，get_status不做操作")
             return "standing"
