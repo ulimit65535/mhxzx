@@ -181,7 +181,7 @@ class AppUI:
                                     _id = win32process.GetWindowThreadProcessId(hwnd)
                                     handle = win32api.OpenProcess(1, False, _id[1])
                                     win32api.TerminateProcess(handle, -1)
-                                    subprocess.Popen("shutdown -s -t 60", shell=True)
+                                subprocess.Popen("shutdown -s -t 60", shell=True)
                             else:
                                 senddata("{}已结束。结束时间:{}".format(self.running, str(datetime.now())), "")
                     else:
