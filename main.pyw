@@ -110,10 +110,13 @@ class AppUI:
         frame2 = Frame(lf1_2)
         frame2.pack(fill=X, side=TOP, padx=5, pady=5)
 
-        self.btn_baoshi = ttk.Button(frame2, text="饱食", width=6, state=DISABLED, command=self.test)
-        self.btn_zudui = ttk.Button(frame2, text="组队", width=6, state=DISABLED, command=self.test)
-        self.btn_baoshi.pack(side=LEFT, padx=2, fill=X)
-        self.btn_zudui.pack(side=LEFT, padx=2, fill=X)
+        # self.btn_baoshi = ttk.Button(frame2, text="饱食", width=6, state=DISABLED, command=self.test)
+        # self.btn_zudui = ttk.Button(frame2, text="组队", width=6, state=DISABLED, command=self.test)
+        # self.btn_baoshi.pack(side=LEFT, padx=2, fill=X)
+        # self.btn_zudui.pack(side=LEFT, padx=2, fill=X)
+        self.is_shutdown = BooleanVar()
+        self.cbx_shutdown = ttk.Checkbutton(frame2, text="结束关机", variable=self.is_shutdown)
+        self.cbx_shutdown.pack(side=LEFT, padx=2, fill=X)
 
         self.btn_task1 = ttk.Button(lf2_2, text="验证一条", state=DISABLED, command=self.test)
         self.btn_task2 = ttk.Button(lf2_2, text="无验证一条", state=DISABLED, command=self.test)
@@ -172,8 +175,15 @@ class AppUI:
                                              'warning')
                         self.msg_list.see("end")
                         if self.running not in ["组队离队", ""]:
-                            senddata("{}已结束。结束时间:{}".format(self.running, str(datetime.now())), "")
-                            pass
+                            if self.is_shutdown.get():
+                                # 关机
+                                for hwnd in self.hwnd_main_list:
+                                    _id = win32process.GetWindowThreadProcessId(hwnd)
+                                    handle = win32api.OpenProcess(1, False, _id[1])
+                                    win32api.TerminateProcess(handle, -1)
+                                    subprocess.Popen("shutdown -s -t 60", shell=True)
+                            else:
+                                senddata("{}已结束。结束时间:{}".format(self.running, str(datetime.now())), "")
                     else:
                         # 自己手动关闭的，不用发送通知
                         self.msg_list.insert(END, "任务已被强制结束。\n结束时间:{}\n".format(str(datetime.now())), 'warning')
@@ -185,6 +195,7 @@ class AppUI:
                 continue
 
     def start(self):
+        # print(self.is_shutdown.get())
         if self.running:
             if self.process:
                 self.process.terminate()
