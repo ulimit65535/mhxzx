@@ -1,7 +1,10 @@
 import threading
+import subprocess
+import win32process
 
 from tkinter import *
 from tkinter import ttk
+from tkinter import messagebox
 from datetime import datetime
 from multiprocessing import Process
 
@@ -97,9 +100,9 @@ class AppUI:
         frame1 = Frame(lf1_1)
         frame1.pack(fill=X, side=TOP, padx=5, pady=5)
 
-        self.btn_open = ttk.Button(frame1, text="双开", width=6, command=self.test)
+        self.btn_open = ttk.Button(frame1, text="三开", width=6, command=self.open)
         self.btn_start = ttk.Button(frame1, text="开始", width=6, command=self.start)
-        self.btn_close = ttk.Button(frame1, text="强关", width=6, command=self.test)
+        self.btn_close = ttk.Button(frame1, text="强关", width=6, command=self.close)
         self.btn_open.pack(side=LEFT, padx=2, fill=X)
         self.btn_start.pack(side=LEFT, padx=2, fill=X)
         self.btn_close.pack(side=LEFT, padx=2, fill=X)
@@ -193,14 +196,15 @@ class AppUI:
                     pass
                 self.subprocess = None
 
-        self.hwnd_main_list = []
+        #self.hwnd_main_list = []
         self.hwnd_list = []
 
         self.running = None
 
-        # 获取主窗口句柄
-        win32gui.EnumWindows(window_enumeration_handler, self.hwnd_main_list)
-        self.hwnd_main_list.sort(reverse=True)
+        if not self.hwnd_main_list:
+            # 获取主窗口句柄
+            win32gui.EnumWindows(window_enumeration_handler, self.hwnd_main_list)
+            self.hwnd_main_list.sort(reverse=True)
         if self.hwnd_main_list:
             for i in range(len(self.hwnd_main_list)):
                 x, y = settings.coordinate_list[i]
@@ -223,6 +227,32 @@ class AppUI:
         self.btn_close.state(['!pressed', '!disabled'])
         self.btn_single_task.state(['!pressed', '!disabled'])
         self.btn_team_task.state(['!pressed', '!disabled'])
+
+    def open(self):
+        self.hwnd_main_list = []
+        cmd = settings.launcher
+        for i in range(3):
+            subprocess.Popen(cmd, shell=True)
+            for j in range(5):
+                time.sleep(1)
+                hwnd_main_list = []
+                win32gui.EnumWindows(window_enumeration_handler, hwnd_main_list)
+                if len(hwnd_main_list) >= i + 1:
+                    for hwnd in hwnd_main_list:
+                        if hwnd not in self.hwnd_main_list:
+                            self.hwnd_main_list.append(hwnd)
+                    break
+        #print(self.hwnd_main_list)
+
+    def close(self):
+        if messagebox.askyesno('提示', "是否强制关闭所有游戏程序?"):
+            for hwnd in self.hwnd_main_list:
+                _id = win32process.GetWindowThreadProcessId(hwnd)
+                handle = win32api.OpenProcess(1, False, _id[1])
+                win32api.TerminateProcess(handle, -1)
+            self.msg_list.insert(END, "游戏进程已关闭。\n关闭时间:{}\n".format(str(datetime.now())),
+                                'warning')
+            self.msg_list.see("end")
 
     def test(self):
         pass
