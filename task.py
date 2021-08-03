@@ -572,7 +572,7 @@ class Task:
         hwnd = self.hwnd_list[0]
         num_standing = 0
         while True:
-            if num_standing >= 20:
+            if num_standing >= 10:
                 print("等待时间过长，结束")
                 return
 
