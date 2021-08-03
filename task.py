@@ -47,6 +47,7 @@ class Task:
         self.button_tuichu_img = cv2.cvtColor(cv2.imread("images/button_tuichu.png"), cv2.COLOR_BGR2GRAY)
         self.button_qianwangtiaozhan_img = cv2.cvtColor(cv2.imread("images/button_qianwangtiaozhan.png"),
                                                         cv2.COLOR_BGR2GRAY)
+        self.button_quxiao_img = cv2.cvtColor(cv2.imread("images/button_quxiao.png"), cv2.COLOR_BGR2GRAY)
 
         self.button_close_img_color = cv2.cvtColor(cv2.imread("images/button_close.png"), cv2.IMREAD_COLOR)
         self.icon_duiwu_shenqing1_img_color = cv2.cvtColor(cv2.imread("images/icon_duiwu_shenqing1.png"),
@@ -210,13 +211,23 @@ class Task:
             px, py = points[0]
             pos = (px + 50, py + 15)
             click(hwnd, pos)
+            return "click_qianwangtiaozhan"
 
         points = get_match_points(src_img, self.duihua_likai_img, threshold=0.85)
         if points:
             print("对话选项，get_status不做操作")
             return "standing"
 
-        # 关闭侠义窗口
+        # 继续挑战，点确定
+        points = get_match_points(src_img, self.button_quxiao_img)
+        if points:
+            print("点确定")
+            px, py = points[0]
+            pos = (px + 230, py + 15)
+            click(hwnd, pos)
+            return "click_queding"
+
+        # 关闭一些窗口
         src_img_color = capture(hwnd, color=cv2.IMREAD_COLOR)
         points = get_match_points(src_img_color, self.button_close_img_color, threshold=0.95)
         if points:
