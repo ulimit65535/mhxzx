@@ -316,8 +316,8 @@ class Task:
                 if not points:
                     print("跳过对话")
                     for i in range(5):
-                        pos = (172, 266)
-                        click(hwnd, pos, 30, 30)
+                        pos = (190, 280)
+                        click(hwnd, pos)
                         time.sleep(random.uniform(0.2, 0.3))
                     return "standing"
                 else:
@@ -699,8 +699,8 @@ class Task:
                         if not points:
                             print("跳过对话")
                             for i in range(5):
-                                pos = (172, 266)
-                                click(hwnd, pos, 30, 30)
+                                pos = (190, 280)
+                                click(hwnd, pos)
                                 time.sleep(random.uniform(0.2, 0.3))
 
     def run_caiji(self):
