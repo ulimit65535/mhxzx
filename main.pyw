@@ -209,15 +209,15 @@ class AppUI:
                     pass
                 self.subprocess = None
 
-        #self.hwnd_main_list = []
+        self.hwnd_main_list = []
         self.hwnd_list = []
 
         self.running = None
 
-        if not self.hwnd_main_list:
-            # 获取主窗口句柄
-            win32gui.EnumWindows(window_enumeration_handler, self.hwnd_main_list)
-            self.hwnd_main_list.sort(reverse=True)
+        #if not self.hwnd_main_list:
+        # 获取主窗口句柄
+        win32gui.EnumWindows(window_enumeration_handler, self.hwnd_main_list)
+        self.hwnd_main_list.sort(reverse=True)
         if self.hwnd_main_list:
             for i in range(len(self.hwnd_main_list)):
                 x, y = settings.coordinate_list[i]
@@ -242,7 +242,7 @@ class AppUI:
         self.btn_team_task.state(['!pressed', '!disabled'])
 
     def open(self):
-        self.hwnd_main_list = []
+        #self.hwnd_main_list = []
         cmd = settings.launcher
         for i in range(3):
             subprocess.Popen(cmd, shell=True)
@@ -251,9 +251,9 @@ class AppUI:
                 hwnd_main_list = []
                 win32gui.EnumWindows(window_enumeration_handler, hwnd_main_list)
                 if len(hwnd_main_list) >= i + 1:
-                    for hwnd in hwnd_main_list:
-                        if hwnd not in self.hwnd_main_list:
-                            self.hwnd_main_list.append(hwnd)
+                    # for hwnd in hwnd_main_list:
+                    #     if hwnd not in self.hwnd_main_list:
+                    #         self.hwnd_main_list.append(hwnd)
                     break
         #print(self.hwnd_main_list)
 
