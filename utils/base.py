@@ -146,3 +146,12 @@ def window_click(hwnd, client_pos, randint_x_max=5, randint_y_max=5):
     time.sleep(random.uniform(0.07, 0.08))
     win32gui.SendMessage(hwnd, win32con.WM_LBUTTONUP, win32con.MK_LBUTTON, tmp)
 """
+
+"""
+# 后台鼠标点击，提供相对坐标
+def window_press(hwnd, key=win32con.VK_SPACE):
+    #win32gui.PostMessage(hwnd, win32con.WM_ACTIVATE, win32con.WA_ACTIVE, 0)
+    win32gui.PostMessage(hwnd, win32con.WM_KEYDOWN, key, 0)
+    time.sleep(random.uniform(0.18, 0.22))
+    win32gui.PostMessage(hwnd, win32con.WM_KEYUP, key, 0)
+"""

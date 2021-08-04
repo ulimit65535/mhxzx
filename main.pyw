@@ -28,6 +28,8 @@ def run_task(hwnd_list, task_name):
         task.run_zidong_queding()
     elif task_name == "组队一条":
         task.run_zudui_yitiao()
+    elif task_name == "自动主线":
+        task.run_zhuxian()
 
 
 class AppUI:
@@ -81,7 +83,7 @@ class AppUI:
 
         self.single_task = StringVar()
         self.cbx_single_target = ttk.Combobox(lf2_0, textvariable=self.single_task, width=6, state='readonly')
-        self.cbx_single_target["values"] = ("刷侠义", "单人一条", "自动确定")
+        self.cbx_single_target["values"] = ("刷侠义", "单人一条", "自动确定", "自动主线")
         self.cbx_single_target.current(0)
         self.cbx_single_target.pack(side=TOP, padx=2, pady=2, fill=X)
 

@@ -623,6 +623,86 @@ class Task:
                 click(hwnd, pos)
                 continue
 
+    def run_zhuxian(self):
+        while True:
+            for hwnd in self.hwnd_list:
+                time.sleep(random.uniform(settings.inverval_min, settings.inverval_max))
+
+                src_img = capture(hwnd)
+
+                # 30秒到时间，会自动挂智能技能，不要点自动
+                points = get_match_points(src_img, self.button_daoju_img)
+                if points:
+                    # pos = (814, 445)
+                    # click(hwnd, pos)
+                    continue
+
+                points = get_match_points(src_img, self.duihua_duihua_img)
+                if points:
+                    px, py = points[0]
+                    pos = (px + 40, py + 5)
+                    click(hwnd, pos)
+                    continue
+
+                points = get_match_points(src_img, self.duihua_zhandou_img)
+                if points:
+                    px, py = points[0]
+                    pos = (px + 40, py + 5)
+                    click(hwnd, pos)
+                    continue
+
+                # 点击空白关闭
+                points = get_match_points(src_img, self.press_kongbaiguanbi_img)
+                if points:
+                    px, py = points[0]
+                    pos = (px + 30, py + 5)
+                    click(hwnd, pos, 50, 5)
+                    continue
+
+                # 关闭建议弹窗
+                points = get_match_points(src_img, self.button_close_jianyi_img, threshold=0.98)
+                if points:
+                    pos = points[0]
+                    click(hwnd, pos)
+                    continue
+
+                # 关闭一些窗口
+                src_img_color = capture(hwnd, color=cv2.IMREAD_COLOR)
+                points = get_match_points(src_img_color, self.button_close_img_color, threshold=0.95)
+                if points:
+                    px, py = points[0]
+                    pos = (px + 7, py + 7)
+                    click(hwnd, pos)
+                    continue
+
+                points = get_match_points(src_img, self.in_battle_img)
+                if points:
+                    continue
+
+                time.sleep(1)
+                src_img2 = capture(hwnd)
+                points = get_match_points(src_img2, self.in_battle_img)
+                if points:
+                    continue
+
+                points = get_match_points(src_img, src_img2, threshold=0.8)
+                if points:
+                    time.sleep(1)
+                    src_img3 = capture(hwnd)
+                    points = get_match_points(src_img3, self.in_battle_img)
+                    if points:
+                        continue
+
+                    points = get_match_points(src_img2, src_img3, threshold=0.8)
+                    if points:
+                        points = get_match_points(src_img3, self.button_beibao_img)
+                        if not points:
+                            print("跳过对话")
+                            for i in range(5):
+                                pos = (172, 266)
+                                click(hwnd, pos, 30, 30)
+                                time.sleep(random.uniform(0.2, 0.3))
+
     def run_caiji(self):
         num_standing = 0
         while True:
