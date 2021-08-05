@@ -340,14 +340,14 @@ class Task:
                     continue
 
                 src_img = capture(hwnd)
-                # 点击确定
-                points = get_match_points(src_img, self.button_queding_img)
-                if points:
-                    print("点击确定")
-                    px, py = points[0]
-                    pos = (px + 40, py + 10)
-                    click(hwnd, pos)
-                    continue
+                # # 点击确定
+                # points = get_match_points(src_img, self.button_queding_img)
+                # if points:
+                #     print("点击确定")
+                #     px, py = points[0]
+                #     pos = (px + 40, py + 10)
+                #     click(hwnd, pos)
+                #     continue
 
                 # 特殊场景，直接退出
                 points = get_match_points(src_img, self.button_tuichu_img, threshold=0.88)
