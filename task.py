@@ -153,14 +153,6 @@ class Task:
             click(hwnd, pos, 50, 5)
             return "press_kongbaiguanbi"
 
-        # # 赏金，点开始任务
-        # points = get_match_points(src_img, self.button_kaishirenwu_img)
-        # if points:
-        #     px, py = points[0]
-        #     pos = (px + 30, py + 5)
-        #     click(hwnd, pos, 50, 10)
-        #     return "click_kaishirenwu"
-
         # 关闭建议弹窗
         points = get_match_points(src_img, self.button_close_jianyi_img, threshold=0.98)
         if points:
@@ -587,6 +579,15 @@ class Task:
                 num_standing += 1
 
             src_img = capture(hwnd)
+
+            # 赏金，点开始任务
+            points = get_match_points(src_img, self.button_kaishirenwu_img)
+            if points:
+                print("赏金，开始任务")
+                px, py = points[0]
+                pos = (px + 30, py + 5)
+                click(hwnd, pos, 50, 10)
+                continue
 
             # 接取任务
             points = get_match_points(src_img, self.duihua_jiequ_img)
