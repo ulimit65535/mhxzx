@@ -16,6 +16,7 @@ from task import Task
 def run_task(hwnd_list, task_name):
     task = Task(hwnd_list)
     print(task_name)
+    hwnd = hwnd_list[0]
     if task_name == "刷侠义":
         task.run_xiayi()
     elif task_name == "单人一条":
@@ -30,6 +31,10 @@ def run_task(hwnd_list, task_name):
         task.run_zudui_yitiao()
     elif task_name == "自动主线":
         task.run_zhuxian()
+    elif task_name == "仙师试炼":
+        task.run_xianshi(hwnd)
+    elif task_name == "精英据点":
+        task.run_jingying(hwnd)
 
 
 class AppUI:
@@ -92,7 +97,7 @@ class AppUI:
 
         self.team_task = StringVar()
         self.cbx_team_task = ttk.Combobox(lf2_3, textvariable=self.team_task, width=6, state='readonly')
-        self.cbx_team_task["values"] = ("无限镇魔", "组队一条")
+        self.cbx_team_task["values"] = ("无限镇魔", "组队一条", "仙师试炼", "精英据点")
         self.cbx_team_task.current(0)
         self.cbx_team_task.pack(side=TOP, padx=2, pady=2, fill=X)
 

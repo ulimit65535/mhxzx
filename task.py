@@ -38,6 +38,7 @@ class Task:
         self.button_jixu_img = cv2.cvtColor(cv2.imread("images/button_jixu.png"), cv2.COLOR_BGR2GRAY)
         self.button_shiyong_img = cv2.cvtColor(cv2.imread("images/button_shiyong.png"), cv2.COLOR_BGR2GRAY)
         self.duihua_duihua_img = cv2.cvtColor(cv2.imread("images/duihua_duihua.png"), cv2.COLOR_BGR2GRAY)
+        self.duihua_duihua2_img = cv2.cvtColor(cv2.imread("images/duihua_duihua2.png"), cv2.COLOR_BGR2GRAY)
         self.duihua_zhandou_img = cv2.cvtColor(cv2.imread("images/duihua_zhandou.png"), cv2.COLOR_BGR2GRAY)
         self.button_paiwei_img = cv2.cvtColor(cv2.imread("images/button_paiwei.png"), cv2.COLOR_BGR2GRAY)
         self.button_queding_paiwei_img = cv2.cvtColor(cv2.imread("images/button_queding_paiwei.png"), cv2.COLOR_BGR2GRAY)
@@ -47,7 +48,15 @@ class Task:
         self.button_tuichu_img = cv2.cvtColor(cv2.imread("images/button_tuichu.png"), cv2.COLOR_BGR2GRAY)
         self.button_qianwangtiaozhan_img = cv2.cvtColor(cv2.imread("images/button_qianwangtiaozhan.png"),
                                                         cv2.COLOR_BGR2GRAY)
+        self.button_qianwangtiaozhan2_img = cv2.cvtColor(cv2.imread("images/button_qianwangtiaozhan2.png"),
+                                                        cv2.COLOR_BGR2GRAY)
         self.button_quxiao_img = cv2.cvtColor(cv2.imread("images/button_quxiao.png"), cv2.COLOR_BGR2GRAY)
+        self.title_xianshishilian_img = cv2.cvtColor(cv2.imread("images/title_xianshishilian.png"), cv2.COLOR_BGR2GRAY)
+        self.title_jingyingjudian_img = cv2.cvtColor(cv2.imread("images/title_jingyingjudian.png"), cv2.COLOR_BGR2GRAY)
+        self.button_qianwang_img = cv2.cvtColor(cv2.imread("images/button_qianwang.png"), cv2.COLOR_BGR2GRAY)
+        self.duihua2_qianwang_img = cv2.cvtColor(cv2.imread("images/duihua2_qianwang.png"), cv2.COLOR_BGR2GRAY)
+        self.duihua_queren_img = cv2.cvtColor(cv2.imread("images/duihua_queren.png"), cv2.COLOR_BGR2GRAY)
+        self.button_faqitiaozhan_img = cv2.cvtColor(cv2.imread("images/button_faqitiaozhan.png"), cv2.COLOR_BGR2GRAY)
 
         self.button_close_img_color = cv2.cvtColor(cv2.imread("images/button_close.png"), cv2.IMREAD_COLOR)
         self.icon_duiwu_shenqing1_img_color = cv2.cvtColor(cv2.imread("images/icon_duiwu_shenqing1.png"),
@@ -137,6 +146,24 @@ class Task:
             print("当前队伍人数:{}".format(num))
         return num
 
+    def open_window_huodong(self, hwnd, src_img=None):
+        if src_img is None:
+            src_img = capture(hwnd)
+        for i in range(3):
+            points = get_match_points(src_img, self.button_beibao_img)
+            if points:
+                # 点击活动
+                pos = (37, 103)
+                click(hwnd, pos)
+                time.sleep(random.uniform(0.8, 1.2))
+                return True
+            else:
+                status = self.get_status(hwnd, src_img)
+                print(status)
+                time.sleep(random.uniform(0.8, 1.2))
+                src_img = capture(hwnd)
+        return False
+
     def get_status(self, hwnd, src_img=None):
         if src_img is None:
             src_img = capture(hwnd)
@@ -196,8 +223,10 @@ class Task:
             click(hwnd, pos)
             return "click_battle"
 
-        # 话本，点前往挑战
+        # 话本、仙师。点前往挑战
         points = get_match_points(src_img, self.button_qianwangtiaozhan_img)
+        if not points:
+            points = get_match_points(src_img, self.button_qianwangtiaozhan2_img)
         if points:
             print("点前往挑战")
             px, py = points[0]
@@ -206,6 +235,8 @@ class Task:
             return "click_qianwangtiaozhan"
 
         points = get_match_points(src_img, self.duihua_duihua_img)
+        if not points:
+            points = get_match_points(src_img, self.duihua_duihua2_img)
         if points:
             print("对话选项，get_status不做操作")
             return "standing"
@@ -566,12 +597,162 @@ class Task:
                 click(hwnd, pos)
                 continue
 
+    def run_xianshi(self, hwnd):
+        num_err = 0
+        while True:
+            if num_err >= 3:
+                print("打开活动窗口失败次数过多，结束")
+                return
+
+            time.sleep(random.uniform(settings.inverval_min, settings.inverval_max))
+
+            src_img = capture(hwnd)
+
+            status = self.get_status(hwnd)
+            print(status)
+            if status != "standing":
+                continue
+
+            # 点击前往
+            points = get_match_points(src_img, self.duihua2_qianwang_img)
+            if points:
+                print("点前往")
+                px, py = points[0]
+                pos = (px + 40, py + 5)
+                click(hwnd, pos)
+                continue
+
+            # 人数不满，确认攻击
+            points = get_match_points(src_img, self.duihua_queren_img)
+            if points:
+                print("点确认")
+                px, py = points[0]
+                pos = (px + 40, py + 5)
+                click(hwnd, pos)
+                continue
+
+            result = self.open_window_huodong(hwnd, src_img)
+            if result:
+                num_err = 0
+            else:
+                num_err += 1
+                print("打开活动窗口失败")
+                continue
+
+            src_img = capture(hwnd)
+            points = get_match_points(src_img, self.title_xianshishilian_img)
+            if not points:
+                print("未找到子活动窗口，仙师试炼结束.")
+                return
+
+            left, top = points[0]
+            w = 250
+            h = 80
+            opponent_img = src_img[top:top + h, left:left + w]
+            # cv2.namedWindow("Image")
+            # cv2.imshow("Image", opponent_img)
+            # cv2.waitKey(0)
+            # sys.exit(1)
+            points = get_match_points(opponent_img, self.button_qianwang_img)
+            if points:
+                # 点击前往
+                x, y = points[0]
+                px = x + left
+                py = y + top
+                pos = (px + 30, py + 10)
+                click(hwnd, pos)
+                continue
+            else:
+                print("未找到前往按钮，仙师试炼已结束.")
+                return
+
+    def run_jingying(self, hwnd):
+        num_err = 0
+        while True:
+            if num_err >= 3:
+                print("打开活动窗口失败次数过多，结束")
+                return
+
+            time.sleep(random.uniform(settings.inverval_min, settings.inverval_max))
+
+            src_img = capture(hwnd)
+
+            status = self.get_status(hwnd)
+            print(status)
+            if status != "standing":
+                continue
+
+            # # 点击前往
+            # points = get_match_points(src_img, self.duihua2_qianwang_img)
+            # if points:
+            #     print("点前往")
+            #     px, py = points[0]
+            #     pos = (px + 40, py + 5)
+            #     click(hwnd, pos)
+            #     continue
+
+            # # 人数不满，确认攻击
+            # points = get_match_points(src_img, self.duihua_queren_img)
+            # if points:
+            #     print("点确认")
+            #     px, py = points[0]
+            #     pos = (px + 40, py + 5)
+            #     click(hwnd, pos)
+            #     continue
+
+            # 发起挑战
+            points = get_match_points(src_img, self.button_faqitiaozhan_img)
+            if points:
+                print("点发起挑战")
+                px, py = points[0]
+                pos = (px + 60, py + 10)
+                click(hwnd, pos)
+                continue
+
+            result = self.open_window_huodong(hwnd, src_img)
+            if result:
+                num_err = 0
+            else:
+                num_err += 1
+                print("打开活动窗口失败")
+                continue
+
+            src_img = capture(hwnd)
+            points = get_match_points(src_img, self.title_jingyingjudian_img)
+            if not points:
+                print("未找到子活动窗口，精英据点结束.")
+                return
+
+            left, top = points[0]
+            w = 250
+            h = 80
+            opponent_img = src_img[top:top + h, left:left + w]
+            # cv2.namedWindow("Image")
+            # cv2.imshow("Image", opponent_img)
+            # cv2.waitKey(0)
+            # sys.exit(1)
+            points = get_match_points(opponent_img, self.button_qianwang_img)
+            if points:
+                # 点击前往
+                x, y = points[0]
+                px = x + left
+                py = y + top
+                pos = (px + 30, py + 10)
+                click(hwnd, pos)
+                continue
+            else:
+                print("未找到前往按钮，精英据点已结束.")
+                return
+
     def run_zudui_yitiao(self):
         hwnd = self.hwnd_list[0]
         num_standing = 0
         while True:
             if num_standing >= 10:
-                print("等待时间过长，结束")
+                print("等待时间过长，开始仙师试炼、精英挑战")
+                self.run_xianshi(hwnd)
+                self.run_jingying(hwnd)
+                print("组队一条结束")
                 return
 
             time.sleep(random.uniform(settings.inverval_min, settings.inverval_max))
@@ -787,6 +968,7 @@ class Task:
                 #     pos = (814, 445)
                 #     click(hwnd, pos)
                 #     continue
+
 
 if __name__ == '__main__':
     task = Task([67206])
