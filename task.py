@@ -57,6 +57,7 @@ class Task:
         self.duihua2_qianwang_img = cv2.cvtColor(cv2.imread("images/duihua2_qianwang.png"), cv2.COLOR_BGR2GRAY)
         self.duihua_queren_img = cv2.cvtColor(cv2.imread("images/duihua_queren.png"), cv2.COLOR_BGR2GRAY)
         self.button_faqitiaozhan_img = cv2.cvtColor(cv2.imread("images/button_faqitiaozhan.png"), cv2.COLOR_BGR2GRAY)
+        self.window_shanghang_img = cv2.cvtColor(cv2.imread("images/window_shanghang.png"), cv2.COLOR_BGR2GRAY)
 
         self.button_close_img_color = cv2.cvtColor(cv2.imread("images/button_close.png"), cv2.IMREAD_COLOR)
         self.icon_duiwu_shenqing1_img_color = cv2.cvtColor(cv2.imread("images/icon_duiwu_shenqing1.png"),
@@ -209,6 +210,11 @@ class Task:
             # pos = (814, 445)
             # click(hwnd, pos)
             return "in_battle"
+
+        # 商行界面，等待
+        points = get_match_points(src_img, self.window_shanghang_img)
+        if points:
+            return "standing"
 
         # 匹配状态
         points = get_match_points(src_img, self.button_duiwu_pipei_img)
