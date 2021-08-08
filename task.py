@@ -470,7 +470,11 @@ class Task:
         num_standing = 0
         is_new_battle = True
         num_members = None
+        num_waiting = 0
         while True:
+            if num_waiting >= 120:
+                print("60s未进战斗")
+                return
             if num_standing >= 5:
                 src_img = capture(hwnd)
                 # 未知对话，点
@@ -501,12 +505,14 @@ class Task:
                 continue
 
             time.sleep(random.uniform(settings.inverval_min, settings.inverval_max))
+            num_waiting += 1
 
             status = self.get_status(hwnd)
             print(status)
             if status != "standing":
                 num_standing = 0
                 if status == "in_battle":
+                    num_waiting = 0
                     # 新的一场战斗，查看队伍中的人数
                     if is_new_battle:
                         is_new_battle = False
