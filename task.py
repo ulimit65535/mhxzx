@@ -610,7 +610,7 @@ class Task:
                 print("打开活动窗口失败次数过多，结束")
                 return
 
-            time.sleep(random.uniform(settings.inverval_min, settings.inverval_max))
+            time.sleep(random.uniform(1.0, 1.2))
 
             src_img = capture(hwnd)
 
@@ -644,6 +644,8 @@ class Task:
                 num_err += 1
                 print("打开活动窗口失败")
                 continue
+
+            time.sleep(random.uniform(settings.inverval_min, settings.inverval_max))
 
             src_img = capture(hwnd)
             points = get_match_points(src_img, self.title_xianshishilian_img)
@@ -722,6 +724,8 @@ class Task:
                 num_err += 1
                 print("打开活动窗口失败")
                 continue
+
+            time.sleep(random.uniform(1.0, 1.2))
 
             src_img = capture(hwnd)
             points = get_match_points(src_img, self.title_jingyingjudian_img)
