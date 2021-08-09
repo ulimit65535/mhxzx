@@ -424,7 +424,7 @@ class Task:
                             points = get_match_points(src_img, self.icon_xingxiazhangyi_img)
                         if points:
                             print("点击申请")
-                            points = get_clean_points(points, reverse=True)
+                            points = get_clean_points(points, reverse=False)
                             for i in range(5):
                                 try:
                                     px, py = points[i]
