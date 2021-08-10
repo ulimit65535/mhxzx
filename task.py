@@ -510,9 +510,9 @@ class Task:
         num_waiting = 0
         while True:
             if num_waiting >= 120:
-                print("60s未进战斗")
+                print("120s未进战斗")
                 return
-            if num_standing >= 5:
+            if num_standing >= 8:
                 src_img = capture(hwnd)
                 # 未知对话，点
                 points = get_match_points(src_img, self.duihua_duihua_img)
