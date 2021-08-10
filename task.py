@@ -256,6 +256,15 @@ class Task:
             click(hwnd, pos)
             return "click_queding"
 
+        # 赏金，点开始任务
+        points = get_match_points(src_img, self.button_kaishirenwu_img)
+        if points:
+            print("赏金，开始任务")
+            px, py = points[0]
+            pos = (px + 30, py + 5)
+            click(hwnd, pos, 50, 10)
+            return "click_kaishirenwu"
+
         # 关闭一些窗口
         src_img_color = capture(hwnd, color=cv2.IMREAD_COLOR)
         points = get_match_points(src_img_color, self.button_close_img_color, threshold=0.95)
